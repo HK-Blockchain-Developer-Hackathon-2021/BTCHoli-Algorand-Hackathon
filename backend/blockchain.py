@@ -10,8 +10,10 @@ PAYLOAD = {
     'manager': ''
 }
 
+
 def process_payload(payload):
     return 'asset_details', 'asset_metadata'
+
 
 mnemonic1 = "other chief ill volcano wonder exercise neglect energy sell general spot kiwi what kiss lunar wrestle column prefer heavy gate quiz rubber oblige ability video"
 mnemonic2 = "hidden company cheap toe ready fish shock spread cost satisfy solution loud cereal tongue pig degree ice what ensure fan ill level wheat ability wait"
@@ -37,6 +39,7 @@ headers = {
 # Initialize an algod client
 algod_client = algod.AlgodClient(algod_token=algod_token, algod_address=algod_address, headers=headers)
 
+
 def wait_for_confirmation(client, txid):
     """
     Utility function to wait until the transaction is
@@ -51,6 +54,7 @@ def wait_for_confirmation(client, txid):
         txinfo = client.pending_transaction_info(txid)
     print("Transaction {} confirmed in round {}.".format(txid, txinfo.get('confirmed-round')))
     return txinfo
+
 
 #   Utility function used to print created asset for account and assetid
 def print_created_asset(algodclient, account, assetid):
@@ -67,6 +71,7 @@ def print_created_asset(algodclient, account, assetid):
             print(json.dumps(my_account_info['params'], indent=4))
             break
 
+
 #   Utility function used to print asset holding for account and assetid
 def print_asset_holding(algodclient, account, assetid):
     # note: if you have an indexer instance available it is easier to just use this
@@ -82,10 +87,10 @@ def print_asset_holding(algodclient, account, assetid):
             print(json.dumps(scrutinized_asset, indent=4))
             break
 
+
 print("Account 1 address: {}".format(accounts[1]['pk']))
 print("Account 2 address: {}".format(accounts[2]['pk']))
 print("Account 3 address: {}".format(accounts[3]['pk']))
-
 
 # CREATE ASSET
 # Get network params for transactions before every transaction.
@@ -122,7 +127,7 @@ print(txid)
 # then grabbing the asset id from the transaction.
 
 # Wait for the transaction to be confirmed
-wait_for_confirmation(algod_client,txid)
+wait_for_confirmation(algod_client, txid)
 
 try:
     # Pull account info for the creator
@@ -232,7 +237,6 @@ for my_account_info in account_info['assets']:
         break
 
 if not holding:
-
     # Use the AssetTransferTxn class to transfer assets and opt-in
     txn = AssetTransferTxn(
         sender=accounts[3]['pk'],
