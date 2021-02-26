@@ -1,9 +1,9 @@
 import json
 from algosdk import mnemonic
 from algosdk.future.transaction import AssetConfigTxn, AssetTransferTxn, AssetFreezeTxn
-from connect_network import algod_client
-from utils import print_asset_holding, print_created_asset, wait_for_confirmation, process_payload
-from test import bond_info
+from blockchain.connect_network import algod_client
+from blockchain.utils import print_asset_holding, print_created_asset, wait_for_confirmation, process_payload
+from blockchain.test import bond_info
 
 mnemonic1 = "other chief ill volcano wonder exercise neglect energy sell general spot kiwi what kiss lunar wrestle column prefer heavy gate quiz rubber oblige ability video"
 mnemonic2 = "hidden company cheap toe ready fish shock spread cost satisfy solution loud cereal tongue pig degree ice what ensure fan ill level wheat ability wait"
