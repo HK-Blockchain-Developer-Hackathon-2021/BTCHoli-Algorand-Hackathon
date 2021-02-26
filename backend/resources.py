@@ -15,7 +15,7 @@ parser.add_argument('natureOfBond', help = 'This field cannot be blank', require
 parser.add_argument('issueSize', help = 'This field cannot be blank', required = True)
 
 parser_update = reqparse.RequestParser()
-parser.add_argument('bondId', help = 'This field cannot be blank', required = True)
+# parser.add_argument('bondId', help = 'This field cannot be blank', required = True)
 
 class get_bond_data(Resource):
     def post(self):
