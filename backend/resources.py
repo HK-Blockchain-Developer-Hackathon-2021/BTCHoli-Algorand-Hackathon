@@ -52,11 +52,11 @@ class give_bond_data(Resource):
             "bonds": cursor
         }
 
-class update_bond(Resource):
-    def put(self):
-        form = db.form
-        data = parser_update.parse_args()
-        cursor = form.find({"_id":data['bondId']})
-        
+# class update_bond(Resource):
+#     def put(self):
+#         form = db.form
+#         data = parser_update.parse_args()
+#         cursor = form.find({"_id":data['bondId']})
+
 
         #rajats function (cursor)
