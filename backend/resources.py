@@ -31,6 +31,7 @@ class get_bond_data(Resource):
         
         return {
             "message": "done",
+            "status": 
             # "bond_id": bond_id.inserted_id
         }
 
