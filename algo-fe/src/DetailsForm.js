@@ -225,7 +225,7 @@ export default function DetailsForm(props) {
                         couponRate,
                         faceValue,
                         issueDate,
-                        nature,
+                        natureOfBond: nature,
                         maturityDate,
                         issueSize,
                         numberOfAnnualPayments
