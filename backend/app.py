@@ -3,10 +3,10 @@ from flask_restful import Api
 from flask_mongoengine import MongoEngine
 from flask import jsonify
 from flask_pymongo import pymongo
-from flask.json import JSONEncoder
+from flask_cors import CORS, cross_origin
 
 app = Flask(__name__)
-
+cors = CORS(app)
 client = pymongo.MongoClient("mongodb+srv://algorand:algorand@cluster0.v886j.mongodb.net/myFirstDatabase?retryWrites=true&w=majority")
 db = client.algorand
 
