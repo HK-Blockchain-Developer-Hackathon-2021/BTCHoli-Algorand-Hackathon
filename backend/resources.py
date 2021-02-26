@@ -12,6 +12,7 @@ parser.add_argument('issueDate', help = 'This field cannot be blank', required =
 parser.add_argument('maturityDate', help = 'This field cannot be blank', required = True)
 parser.add_argument('numberOfAnnualPayments', help = 'This field cannot be blank', required = True)
 parser.add_argument('natureOfBond', help = 'This field cannot be blank', required = True)
+parser.add_argument('issueSize', help = 'This field cannot be blank', required = True)
 
 class get_bond_data(Resource):
     def post(self):
@@ -25,13 +26,34 @@ class get_bond_data(Resource):
             'issue_date': data['issueDate'],
             'maturity_date': data['maturityDate'],
             'number_of_annual_payments': data['numberOfAnnualPayments'],
-            'nature_of_bond': data['natureOfBond']
+            'nature_of_bond': data['natureOfBond'],
+            'issue_size': data['issueSize'],
+            'is_signed': "false"
         }
         bond_id = form.insert_one(bond_info)
         
         return {
-            "message": "done",
-            "status": 
-            # "bond_id": bond_id.inserted_id
+            "message": "done"
         }
+
+# class get_bond_data(Resource):
+#     def post(self):
+#         form = db.form
+#         data = parser.parse_args()
+#         bond_info = {
+#             'bond_name': data['bondName'],
+#             'coupon_rate': data['couponRate'],
+#             'issuer_name': data['issuerName'],
+#             'face_value': data['faceValue'],
+#             'issue_date': data['issueDate'],
+#             'maturity_date': data['maturityDate'],
+#             'number_of_annual_payments': data['numberOfAnnualPayments'],
+#             'nature_of_bond': data['natureOfBond']
+#         }
+#         bond_id = form.insert_one(bond_info)
+        
+#         return {
+#             "message": "done"
+#             # "bond_id": bond_id.inserted_id
+#         }
 
