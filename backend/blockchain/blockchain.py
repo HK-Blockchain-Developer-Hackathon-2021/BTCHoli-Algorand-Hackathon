@@ -75,7 +75,9 @@ def create_asset(payload):
     except Exception as e:
         print(e)
 
-create_asset(bond_info)
+    return asset_id
+
+# create_asset(bond_info)
 
 # OPT-IN
 def activate_account(asset_id):
