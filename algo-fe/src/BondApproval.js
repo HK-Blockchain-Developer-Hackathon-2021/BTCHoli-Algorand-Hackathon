@@ -14,8 +14,10 @@ import Button from '@material-ui/core/Button';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
 import axios from 'axios';
+import Modal from '@material-ui/core/Modal';
 
 const url = 'http://127.0.0.1:5000/getForm';
+const url2 = 'http://127.0.0.1:5000/updateForm';
 
 const useRowStyles = makeStyles({
   root: {
@@ -50,6 +52,10 @@ function Row(props) {
   const [open, setOpen] = React.useState(false);
   const classes = useRowStyles();
 
+  const nextPath = (path) => {
+    props.history.push(path);
+  }
+
   return (
     <React.Fragment>
       <TableRow className={classes.root}>
@@ -71,8 +77,13 @@ function Row(props) {
             color="primary"
             disabled={row.is_signed}
             className={classes.button}
-            onClick={() => {
-                console.log(row._id)
+            onClick={async () => {
+                const response = await axios.put(url2, {
+                  bondId: row._id
+                })
+                if(response.data.message === 'done') {
+                  nextPath('/menu')
+                }
             }}
             >
                 Approve
