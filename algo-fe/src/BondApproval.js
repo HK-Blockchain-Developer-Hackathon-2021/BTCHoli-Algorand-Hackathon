@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/core/styles';
 import Box from '@material-ui/core/Box';
@@ -13,6 +13,11 @@ import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
+import axios from 'axios';
+import Modal from '@material-ui/core/Modal';
+
+const url = 'http://127.0.0.1:5000/getForm';
+const url2 = 'http://127.0.0.1:5000/updateForm';
 
 const useRowStyles = makeStyles({
   root: {
@@ -47,6 +52,10 @@ function Row(props) {
   const [open, setOpen] = React.useState(false);
   const classes = useRowStyles();
 
+  const nextPath = (path) => {
+    props.history.push(path);
+  }
+
   return (
     <React.Fragment>
       <TableRow className={classes.root}>
@@ -68,8 +77,13 @@ function Row(props) {
             color="primary"
             disabled={row.is_signed}
             className={classes.button}
-            onClick={() => {
-                console.log(row._id)
+            onClick={async () => {
+                const response = await axios.put(url2, {
+                  bondId: row._id
+                })
+                if(response.data.message === 'done') {
+                  nextPath('/menu')
+                }
             }}
             >
                 Approve
@@ -95,29 +109,21 @@ function Row(props) {
   );
 }
 
-
-// _id,
-//     bond_name,
-//     coupon_rate,
-//     issuer_name,
-//     face_value,
-//     issue_date,
-//     maturity_date,
-//     number_of_annual_payments,
-//     nature_of_bond,
-//     issue_size,
-//     is_signed,
-
-const rows = [
-  createData("60390d8176d276c0c8d0187f","abs","56","me","100","7685","9678","6","bad","1000",false),
-  createData("60390d8176d276c0c8d0187g","hellobond","20","govt","200","76851","96781","20","good","20000",true)
-];
-
 export default function BondApproval(props) {
   const classes = useRowStyles();
+  const [rows, setRows] = useState([]);
   const nextPath = (path) => {
     props.history.push(path);
   }
+
+  useEffect(() => {
+    async function fetchData() {
+      const response = await axios.get(url);
+      setRows(response.data.bonds)
+    }
+    fetchData();
+  }, []);
+
   return (
     <div style={{ width: '100%', alignContents: 'center' }}>
       <Table aria-label="collapsible table" style={{ width: 1300, margin: 'auto' }}>
