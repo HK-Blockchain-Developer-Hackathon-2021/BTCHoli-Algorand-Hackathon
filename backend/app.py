@@ -15,3 +15,4 @@ import resources
 api = Api(app)
 api.add_resource(resources.get_bond_data, '/bondForm')
 api.add_resource(resources.give_bond_data, '/getForm')
+api.add_resource(resources.update_bond, '/updateForm')

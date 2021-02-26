@@ -2,6 +2,7 @@ from flask_restful import Resource, reqparse
 from datetime import datetime
 from app import db
 import json 
+from bson.objectid import ObjectId
 
 parser = reqparse.RequestParser()
 parser.add_argument('bondName', help = 'This field cannot be blank', required = True)
@@ -15,7 +16,7 @@ parser.add_argument('natureOfBond', help = 'This field cannot be blank', require
 parser.add_argument('issueSize', help = 'This field cannot be blank', required = True)
 
 parser_update = reqparse.RequestParser()
-# parser.add_argument('bondId', help = 'This field cannot be blank', required = True)
+parser_update.add_argument('bondId', help = 'This field cannot be blank', required = True)
 
 class get_bond_data(Resource):
     def post(self):
@@ -52,13 +53,19 @@ class give_bond_data(Resource):
             "bonds": cursor
         }
 
-# class update_bond(Resource):
-#     def put(self):
-#         form = db.form
-#         data = parser_update.parse_args()
-#         data['bondId'] = data['bondId']
-#         cursor = form.find({"_id":data['bondId']})
-        
-#         #rajats function (cursor)
+class update_bond(Resource):
+    def put(self):
+        form = db.form
+        data = parser_update.parse_args()
+        id = ObjectId(data['bondId'])
+        cursor = list(form.find({"_id":id}))
+
+        for cc in range (0,len(cursor)):
+            cursor[cc]['_id'] = str(cursor[0]['_id'])
+
+        return{
+            "bonds": cursor
+        }
+        #rajats function (cursor)
 
 
