@@ -48,7 +48,7 @@ def create_asset(payload):
         clawback=accounts[1]['pk'],
         # url="https://path/to/my/asset/details",
         decimals=0,
-        metadata_hash=asset_details['metadata_hash'])
+        metadata_hash=asset_details['metadata_hash'].encode('ascii'))
     # Sign with secret key of creator
     stxn = txn.sign(accounts[1]['sk'])
 
