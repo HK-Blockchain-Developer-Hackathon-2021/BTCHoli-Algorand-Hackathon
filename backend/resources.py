@@ -172,7 +172,7 @@ class complete_order(Resource):
         order_id = ObjectId(data['orderId'])
         order = dict(db.orders.find_one({'_id':order_id}))
 
-        dict_r = {'usdt_amount': order['usdt_amount'], 'token_amount': order['token_amount'], 'asset_id': order['asset_id']}
+        dict_r = {'usdt_amount': order['usdt_amount'], 'token_amount': int(order['token_amount']), 'asset_id': int(order['asset_id'])}
 
         if order['type'] == "SELL":
             buyer = data['userId']
