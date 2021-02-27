@@ -1,5 +1,14 @@
 import json
 import hashlib
+from threading import Event, Thread
+
+def call_repeatedly(interval, func, *args):
+    stopped = Event()
+    def loop():
+        while not stopped.wait(interval): # the first call is in `interval` secs
+            func(*args)
+    Thread(target=loop).start()    
+    return stopped.set
 
 def process_payload(payload):
     asset_metadata = {
@@ -8,7 +17,8 @@ def process_payload(payload):
             'face_value': payload['face_value'],
             'issue_date': payload['issue_date'],
             'maturity_date': payload['maturity_date'],
-            'number_of_annual_payments': payload['number_of_annual_payments'],
+            'unit': payload['unit'],
+            'frequency': payload['frequency'],
             'nature_of_bond': payload['nature_of_bond'],
     }
     asset_details = {
@@ -67,7 +77,7 @@ def print_asset_holding(algodclient, account, assetid):
 
 def get_number_of_seconds(unit, frequency):
     if frequency == "seconds":
-        return 1
+        return 10
     elif frequency == "minutes":
         return int(60/unit)
     elif frequency == "hourly":

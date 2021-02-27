@@ -3,13 +3,12 @@ from algosdk import mnemonic
 from algosdk.future.transaction import AssetConfigTxn, AssetTransferTxn, AssetFreezeTxn
 from blockchain.connect_network import algod_client
 from blockchain.utils import print_asset_holding, print_created_asset, wait_for_confirmation, process_payload
-from app import db
+from db_connection import db
+from blockchain.config import USDT_asset_id
 
 mnemonic1 = "other chief ill volcano wonder exercise neglect energy sell general spot kiwi what kiss lunar wrestle column prefer heavy gate quiz rubber oblige ability video"
 mnemonic2 = "hidden company cheap toe ready fish shock spread cost satisfy solution loud cereal tongue pig degree ice what ensure fan ill level wheat ability wait"
 mnemonic3 = "valve affair shoulder all exhaust evil small model tornado inspire crane army horse dismiss ridge book quiz tribe sport hero wild slab grape absent rebuild"
-
-USDT_asset_id = 14207586
 
 # For ease of reference, add account public and private keys to
 # an accounts dict.
@@ -49,7 +48,7 @@ def create_asset(payload):
         freeze=accounts[1]['pk'],
         clawback=accounts[1]['pk'],
         # url="https://path/to/my/asset/details",
-        decimals=5,
+        decimals=0,
         metadata_hash=asset_details['metadata_hash'].encode('ascii'))
     # Sign with secret key of creator
     stxn = txn.sign(accounts[1]['sk'])
@@ -137,7 +136,7 @@ def transfer_asset(asset_id, user_memonic, amount):
         sender=accounts[1]['pk'],
         sp=params,
         receiver=account["pk"],
-        amt=amount,
+        amt=int(amount),
         index=asset_id)
     stxn = txn.sign(accounts[1]['sk'])
     txid = algod_client.send_transaction(stxn)
@@ -149,8 +148,10 @@ def transfer_asset(asset_id, user_memonic, amount):
 
 
 def distribute_dividends(asset_info):
+    print("Distributing dividends for: ", asset_info['bond_name'])
     params = algod_client.suggested_params()
-    purchases = db.transactions.find({'asset-id': asset_info['_id'], 'action': 'BUY'})
+    purchases = [purchase for purchase in db.transaction.find({})
+                 if purchase['asset_id'] == asset_info['asset_id'] and purchase['action'] == 'BUY']
     for purchase in purchases:
         user_id = purchase['user_id']
         user = db.user.find_one({'_id': user_id})
@@ -163,7 +164,7 @@ def distribute_dividends(asset_info):
             sender=accounts[1]['pk'],
             sp=params,
             receiver=user_pk,
-            amt=amount,
+            amt=int(amount),
             index=USDT_asset_id)
         stxn = txn.sign(accounts[1]['sk'])
         txid = algod_client.send_transaction(stxn)
