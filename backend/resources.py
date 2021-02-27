@@ -124,7 +124,7 @@ class purchase_bond(Resource):
         }
 
 class get_profile(Resource):
-    def get(self):
+    def post(self):
         data = parser_profile.parse_args()
         user_memonic = data['userId']
         user = db.user.find_one({'mnemonic': user_memonic})
