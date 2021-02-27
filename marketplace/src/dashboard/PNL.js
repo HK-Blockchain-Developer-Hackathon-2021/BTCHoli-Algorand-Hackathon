@@ -14,11 +14,11 @@ const useStyles = makeStyles({
   },
 });
 
-export default function Deposits() {
+export default function PNL() {
   const classes = useStyles();
   return (
     <React.Fragment>
-      <Title>Recent Deposits</Title>
+      <Title>PNL</Title>
       <Typography component="p" variant="h4">
         $3,024.00
       </Typography>
