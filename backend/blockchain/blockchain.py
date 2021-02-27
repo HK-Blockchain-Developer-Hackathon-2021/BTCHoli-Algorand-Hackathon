@@ -188,6 +188,10 @@ def p2p_order(buyer, seller, order_details):
     seller_pk = mnemonic.to_public_key(seller)
     seller_sk = mnemonic.to_private_key(seller)
 
+    # activate buyer's account
+    print("Activating Buyer's account")
+    activate_account(order_details['asset_id'], buyer)
+
     # Token transaction
     print("\n Executing Token Transaction")
     token_txn = AssetTransferTxn(
@@ -202,7 +206,9 @@ def p2p_order(buyer, seller, order_details):
     wait_for_confirmation(algod_client, token_txid)
     print_asset_holding(algod_client, buyer_pk, order_details['asset_id'])
 
-    # Calculate - USDT_Amount
+    # Activating USDT for seller
+    print("Activating USDT for Seller")
+    activate_account(USDT_asset_id, seller)
 
     # USDT Transaction
     print("\n USDT Transaction")
@@ -216,4 +222,5 @@ def p2p_order(buyer, seller, order_details):
     usdt_txid = algod_client.send_transaction(usdt_stxn)
     print(usdt_txid)
     wait_for_confirmation(algod_client, usdt_txid)
-    print_asset_holding(algod_client, seller_pk, order_details[USDT_asset_id])
+    print_asset_holding(algod_client, seller_pk, USDT_asset_id)
+
