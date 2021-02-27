@@ -137,7 +137,7 @@ def transfer_asset(asset_id, user_memonic, amount):
         sender=accounts[1]['pk'],
         sp=params,
         receiver=account["pk"],
-        amt=amount,
+        amt=amount*100,
         index=asset_id)
     stxn = txn.sign(accounts[1]['sk'])
     txid = algod_client.send_transaction(stxn)
@@ -149,8 +149,9 @@ def transfer_asset(asset_id, user_memonic, amount):
 
 
 def distribute_dividends(asset_info):
+    print("Distributing dividends for: ", asset_info['bond_name'])
     params = algod_client.suggested_params()
-    purchases = db.transactions.find({'asset-id': asset_info['_id'], 'action': 'BUY'})
+    purchases = db.transaction.find({'asset-id': asset_info['asset_id'], 'action': 'BUY'})
     for purchase in purchases:
         user_id = purchase['user_id']
         user = db.user.find_one({'_id': user_id})
