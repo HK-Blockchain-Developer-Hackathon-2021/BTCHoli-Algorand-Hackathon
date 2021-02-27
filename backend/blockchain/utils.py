@@ -12,7 +12,7 @@ def process_payload(payload):
             'nature_of_bond': payload['nature_of_bond'],
     }
     asset_details = {
-        'bond_name': payload['bond_name'],
+        'bond_name': payload['bond_name'][:3],
         'issue_size': payload['issue_size'],
         'metadata_hash': hashlib.md5(json.dumps(asset_metadata).encode()).hexdigest()
     }
@@ -64,3 +64,18 @@ def print_asset_holding(algodclient, account, assetid):
             print("Asset ID: {}".format(scrutinized_asset['asset-id']))
             print(json.dumps(scrutinized_asset, indent=4))
             break
+
+def get_number_of_seconds(unit, frequency):
+    if frequency == "seconds":
+        return 1
+    elif frequency == "minutes":
+        return int(60/unit)
+    elif frequency == "hourly":
+        return int(60*60/unit)
+    elif frequency == "daily":
+        return int(60*60*24/unit)
+    elif frequency == "monthly":
+        return int(60*60*24*30/unit)
+    elif frequency == "annually":
+        return int(60*60*24*30*12/unit)
+
