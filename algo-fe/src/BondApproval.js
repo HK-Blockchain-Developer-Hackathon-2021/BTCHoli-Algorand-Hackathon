@@ -78,9 +78,11 @@ function Row(props) {
             disabled={row.is_signed}
             className={classes.button}
             onClick={async () => {
+                console.log(row._id)
                 const response = await axios.put(url2, {
                   bondId: row._id
                 })
+                console.log(response)
                 if(response.data.message === 'done') {
                   nextPath('/menu')
                 }
@@ -119,6 +121,7 @@ export default function BondApproval(props) {
   useEffect(() => {
     async function fetchData() {
       const response = await axios.get(url);
+      console.log(response)
       setRows(response.data.bonds)
     }
     fetchData();

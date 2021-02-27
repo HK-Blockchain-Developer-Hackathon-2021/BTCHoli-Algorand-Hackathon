@@ -3,7 +3,7 @@ from datetime import datetime
 from app import db
 from blockchain.blockchain import create_asset
 import json 
-from bson.objectid import ObjectId
+from bson import ObjectId
 
 parser = reqparse.RequestParser()
 parser.add_argument('bondName', help = 'This field cannot be blank', required = True)
@@ -64,6 +64,8 @@ class update_bond(Resource):
         form = db.form
         data = parser_update.parse_args()
         id = ObjectId(data['bondId'])
+        print(id)
+        print(data['bondId'])
         cursor = form.find_one({"_id":id})
 
         contract_id = create_asset(cursor)
