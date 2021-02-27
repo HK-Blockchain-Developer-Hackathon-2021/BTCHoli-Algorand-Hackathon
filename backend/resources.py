@@ -3,9 +3,11 @@ from datetime import datetime
 from db_connection import db
 from blockchain.blockchain import create_asset, distribute_dividends, transfer_asset, activate_account
 from blockchain.utils import get_number_of_seconds
-import json 
 from bson.objectid import ObjectId
 from blockchain.utils import call_repeatedly
+from flask import request
+import stripe
+import json 
 
 parser = reqparse.RequestParser()
 parser.add_argument('bondName', help = 'This field cannot be blank', required = True)
@@ -26,6 +28,13 @@ parser_trans = reqparse.RequestParser()
 parser_trans.add_argument('userId', help = 'This field cannot be blank', required = True)
 parser_trans.add_argument('assetId', help = 'This field cannot be blank', required = True)
 parser_trans.add_argument('amount', help = 'This field cannot be blank', required = True)
+
+parser_stripe = reqparse.RequestParser()
+parser_stripe.add_argument('cardNumber', help = 'This field cannot be blank', required = True)
+parser_stripe.add_argument('expMonth', help = 'This field cannot be blank', required = True)
+parser_stripe.add_argument('expYear', help = 'This field cannot be blank', required = True)
+parser_stripe.add_argument('cvv', help = 'This field cannot be blank', required = True)
+parser_stripe.add_argument('amount', help = 'This field cannot be blank', required = True)
 
 class get_bond_data(Resource):
     def post(self):
@@ -113,7 +122,33 @@ class purchase_bond(Resource):
         }
 
 
+class stripe_check(Resource):
+    def get(self):
+        SECRET_KEY = "sk_test_51IP3SAISiEQTlbp6XG9ARetZmPB7AicRV7Ahxu98gkjmD2fmmOaFbdaXYm8Qxo7MvsvNhpZaqu2R0WfziuScKtLP00y2BAn9Hh"
+        stripe.api_key=SECRET_KEY
 
+        data = parser_stripe.parse_args()
+        
+        try:
+            info = stripe.Token.create(
+                card={
+                    "number": data['cardNumber'],
+                    "exp_month": data['expMonth'],
+                    "exp_year": data['expYear'],
+                    "cvc": data['cvv'],
+                })
+            card_token = info['id']
+        
+            payment = stripe.Charge.create(
+                    amount= int(data['amount'])*100,                 
+                    currency='usd',
+                    description='Airport Bond',
+                    source=info['id']
+                    )
+            return(payment['paid'])
+
+        except:
+            return("ille")
 
 
 
