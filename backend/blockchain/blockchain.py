@@ -145,30 +145,3 @@ def transfer_asset(asset_id, user_memonic, amount):
     # The balance should now be 10.
     print_asset_holding(algod_client, account['pk'], asset_id)
 
-
-activate_account(14204438, mnemonic3)
-transfer_asset(14204438, mnemonic3, 10)
-
-# # DESTROY ASSET
-# # With all assets back in the creator's account,
-# # the manager (Account 1) destroys the asset.
-# params = algod_client.suggested_params()
-# # comment these two lines if you want to use suggested params
-# params.fee = 1000
-# params.flat_fee = True
-#
-# # Asset destroy transaction
-# txn = AssetConfigTxn(
-#     sender=accounts[1]['pk'],
-#     sp=params,
-#     index=asset_id,
-#     strict_empty_address_check=False
-# )
-#
-# # Sign with secret key of creator
-# stxn = txn.sign(accounts[1]['sk'])
-# # Send the transaction to the network and retrieve the txid.
-# txid = algod_client.send_transaction(stxn)
-# print(txid)
-# # Wait for the transaction to be confirmed
-# wait_for_confirmation(algod_client, txid)
