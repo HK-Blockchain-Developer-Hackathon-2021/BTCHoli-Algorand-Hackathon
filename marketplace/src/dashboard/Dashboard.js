@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import clsx from 'clsx';
 import {makeStyles} from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -11,29 +11,24 @@ import Divider from '@material-ui/core/Divider';
 import IconButton from '@material-ui/core/IconButton';
 import Button from '@material-ui/core/Button';
 import Container from '@material-ui/core/Container';
-import Grid from '@material-ui/core/Grid';
-import Paper from '@material-ui/core/Paper';
 import Link from '@material-ui/core/Link';
 import MenuIcon from '@material-ui/icons/Menu';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
-import Transactions from "./transactions";
 import {MainListItems} from './listItems';
-import PNL from './PNL';
-import Orders from './Orders';
-import Chart from "react-google-charts";
 import ViewEnum from "./ViewEnum";
 import Portfolio from "./Portfolio";
+
+import axios from "axios";
 
 
 const Switch = props => {
     const {test, children} = props
-    // filter out only children with a matching prop
     return children.find(child => {
         return child.props.value === test
     })
 }
 
-function Copyright() {
+const Copyright = () => {
     return (
         <Typography variant="body2" color="textSecondary" align="center">
             {'Copyright © '}
@@ -133,10 +128,54 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 
+function createData(id, token, quantity, value) {
+    return {id, token, quantity, value};
+}
+
+const rows = [
+    createData(0, 'ABC', 10, 312.44),
+    createData(1, 'DEF', 12, 866.99),
+    createData(2, 'GHI', 23, 100.81),
+    createData(3, 'SFD', 23, 654.39),
+    createData(4, 'WFE', 43, 212.79),
+];
+
+
+function createChartRows(time, amount) {
+    return {time, amount};
+}
+
+const chartRows = [
+    createChartRows('00:00', 0),
+    createChartRows('03:00', 300),
+    createChartRows('06:00', 600),
+    createChartRows('09:00', 800),
+    createChartRows('12:00', 1500),
+    createChartRows('15:00', 2000),
+    createChartRows('18:00', 2400),
+    createChartRows('21:00', 2400),
+    createChartRows('24:00', undefined),
+];
+
+function createTransactionData(order_no, token, side, price, quantity, time) {
+    let total = price * quantity;
+    return {order_no, token, side, price, quantity, total, time};
+}
+
+const transactionRows = [
+    createTransactionData(0, 'ABC', "BUY", 312.44, 10, "10:12:32"),
+    createTransactionData(1, 'DEF', "SELL", 866.99, 32, "10:12:32"),
+    createTransactionData(2, 'GHI', "SELL", 100.81, 413, "10:12:32"),
+    createTransactionData(3, 'SFD', "BUY", 654.39, 14, "10:12:32"),
+    createTransactionData(4, 'WFE', "SELL", 212.79, 4123, "10:12:32")
+];
+
 export default function Dashboard() {
     const classes = useStyles();
     const [open, setOpen] = React.useState(true);
     const [view, setView] = React.useState(ViewEnum.DASHBOARD);
+    const [data, setData] = React.useState({});
+
     const handleDrawerOpen = () => {
         setOpen(true);
     };
@@ -144,8 +183,20 @@ export default function Dashboard() {
         setOpen(false);
     };
 
-    const fixedHeightPNL = clsx(classes.paper, classes.fixedHeightPNL);
+    useEffect(() => {
+        // const timer = setInterval(() => getData(), 1000);
+        // return () => clearInterval(timer);
+    }, [])
 
+
+    const getData = () => {
+        // console.log("getting data");
+        // axios.get("")
+        //     .then(res => {
+        //         const d = res.data;
+        //         setData(d);
+        //     })
+    }
     const handleViewClick = (view) => {
         setView(view);
     }
@@ -191,7 +242,7 @@ export default function Dashboard() {
                 <Container maxWidth="lg" className={classes.container}>
                     <Switch test={view}>
                         <div value={ViewEnum.DASHBOARD}>
-                            <Portfolio/>
+                            <Portfolio data={data}/>
                         </div>
 
                         <div value={ViewEnum.ORDERNOW}>
