@@ -1,6 +1,7 @@
 from flask_restful import Resource, reqparse
 from datetime import datetime
 from app import db
+from blockchain.blockchain import create_asset
 import json 
 from bson.objectid import ObjectId
 
@@ -18,6 +19,9 @@ parser.add_argument('issueSize', help = 'This field cannot be blank', required =
 parser_update = reqparse.RequestParser()
 parser_update.add_argument('bondId', help = 'This field cannot be blank', required = True)
 
+parser_update = reqparse.RequestParser()
+parser_update.add_argument('bondId', help = 'This field cannot be blank', required = True)
+
 class get_bond_data(Resource):
     def post(self):
         form = db.form
@@ -31,7 +35,7 @@ class get_bond_data(Resource):
             'maturity_date': data['maturityDate'],
             'number_of_annual_payments': data['numberOfAnnualPayments'],
             'nature_of_bond': data['natureOfBond'],
-            'issue_size': data['issueSize'],
+            'issue_size': int(data['issueSize']),
             'is_signed': False,
             'asset_id': None
         }
@@ -58,14 +62,14 @@ class update_bond(Resource):
         form = db.form
         data = parser_update.parse_args()
         id = ObjectId(data['bondId'])
-        cursor = list(form.find({"_id":id}))
+        cursor = form.find_one({"_id":id})
 
-        for cc in range (0,len(cursor)):
-            cursor[cc]['_id'] = str(cursor[0]['_id'])
+        contract_id = create_asset(cursor)
+        form.update({"_id":id},{"$set": { "is_signed" : True, "asset_id" : contract_id}})
 
         return{
-            "bonds": cursor
+            "message": "done",
+            "asset_id": contract_id
         }
-        #rajats function (cursor)
 
 
