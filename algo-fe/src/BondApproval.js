@@ -48,7 +48,7 @@ function createData(_id, bond_name, coupon_rate, issuer_name, face_value, issue_
 }
 
 function Row(props) {
-  const { row } = props;
+  const { row, history } = props;
   const [open, setOpen] = React.useState(false);
   const classes = useRowStyles();
 
@@ -78,9 +78,11 @@ function Row(props) {
             disabled={row.is_signed}
             className={classes.button}
             onClick={async () => {
+                console.log(row._id)
                 const response = await axios.put(url2, {
                   bondId: row._id
                 })
+                console.log(response)
                 if(response.data.message === 'done') {
                   nextPath('/menu')
                 }
@@ -98,7 +100,8 @@ function Row(props) {
                 More Info
               </Typography>
               <p><b>Issuer Name: </b> {row.issuer_name}</p>
-              <p><b>Number of Annual Payments: </b> {row.number_of_annual_payments}</p>
+              <p><b>Number of Annual Payments: </b> {row.unit}</p>
+              <p><b>Frequency: </b> {row.frequency}</p>
               <p><b>Nature of Bond: </b> {row.nature_of_bond}</p>
               <p><b>Issue Size: </b> {row.issue_size}</p>
             </Box>
@@ -119,6 +122,7 @@ export default function BondApproval(props) {
   useEffect(() => {
     async function fetchData() {
       const response = await axios.get(url);
+      console.log(response)
       setRows(response.data.bonds)
     }
     fetchData();
@@ -140,7 +144,7 @@ export default function BondApproval(props) {
         </TableHead>
         <TableBody>
           {rows.map((row) => (
-            <Row key={row._id} row={row} />
+            <Row key={row._id} row={row} history={props.history}/>
           ))}
         </TableBody>
       </Table>

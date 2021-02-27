@@ -8,6 +8,7 @@ import Typography from '@material-ui/core/Typography';
 import Grid from '@material-ui/core/Grid';
 import TextField from '@material-ui/core/TextField';
 import axios from 'axios';
+import { InputLabel, FormControl, MenuItem, Select } from '@material-ui/core'
 
 function Copyright() {
   return (
@@ -72,6 +73,7 @@ export default function DetailsForm(props) {
   const [numberOfAnnualPayments, setNumberOfAnnualPayments] = React.useState(1);
   const [nature, setNature] = React.useState('');
   const [issueSize, setIssueSize] = React.useState(1);
+  const [frequency, setFrequency] = React.useState('seconds');
   const [isResponse, setIsResponse] = React.useState(false);
 
   const url = 'http://127.0.0.1:5000/bondForm';
@@ -186,9 +188,9 @@ export default function DetailsForm(props) {
                 <Grid item xs={12} sm={6}>
                   <TextField
                     required
-                    id="numberOfAnnualPayments"
-                    name="numberOfAnnualPayments"
-                    label="Number of Annual Payments"
+                    id="unit"
+                    name="unit"
+                    label="Unit"
                     fullWidth
                     type="number"
                     autoComplete="numberOfAnnualPayments"
@@ -197,6 +199,27 @@ export default function DetailsForm(props) {
                   />
                 </Grid>
                 <Grid item xs={12} sm={6}>
+                  <FormControl variant="outlined" className={classes.formControl}>
+                      <InputLabel id="demo-simple-select-outlined-label">Frequency</InputLabel>
+                      <Select
+                        labelId="demo-simple-select-outlined-label"
+                        id="demo-simple-select-outlined"
+                        value={frequency}
+                        onChange={(e) => {
+                          setFrequency(e.target.value)
+                        }}
+                        label="Frequency"
+                      >
+                        <MenuItem value={"seconds"}>Seconds</MenuItem>
+                        <MenuItem value={"minutes"}>Minutes</MenuItem>
+                        <MenuItem value={"hourly"}>Hourly</MenuItem>
+                        <MenuItem value={"daily"}>Daily</MenuItem>
+                        <MenuItem value={"monthly"}>Monthly</MenuItem>
+                        <MenuItem value={"annually"}>Annually</MenuItem>
+                      </Select>
+                  </FormControl>
+                </Grid>
+                <Grid item xs={12} sm={12}>
                   <TextField
                     required
                     id="nature"
@@ -228,7 +251,8 @@ export default function DetailsForm(props) {
                         natureOfBond: nature,
                         maturityDate,
                         issueSize,
-                        numberOfAnnualPayments
+                        numberOfAnnualPayments,
+                        frequency
                       })
                     if (response.data.message === 'done') {
                       console.log(response)

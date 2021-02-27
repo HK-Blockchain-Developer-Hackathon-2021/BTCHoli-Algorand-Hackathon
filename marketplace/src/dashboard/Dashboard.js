@@ -15,11 +15,13 @@ import MenuIcon from '@material-ui/icons/Menu';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import {MainListItems} from './listItems';
 import ViewEnum from "./ViewEnum";
+import NestedGrid from './CardGrid';
 import Portfolio from "./Portfolio";
 import { css } from '@emotion/core';
 import HashLoader from "react-spinners/HashLoader";
 import axios from "axios";
 
+import DetailsForm from './ReferralForm';
 
 
 const override = css`
@@ -234,8 +236,11 @@ export default function Dashboard() {
                                 <Portfolio data={data}/>
                             </div>
 
-                            <div value={ViewEnum.ORDERNOW}>
-                                WHATTTTTTT
+                            <div value={ViewEnum.ORDERNOW} style={{ display: 'flex', flexDirection: 'row'}}>
+                                <NestedGrid />
+                            </div>
+                            <div value={ViewEnum.REFERRAL} style={{ display: 'flex', flexDirection: 'row'}}>
+                                <DetailsForm />
                             </div>
                         </Switch>
                     }
