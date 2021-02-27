@@ -8,7 +8,8 @@ def process_payload(payload):
             'face_value': payload['face_value'],
             'issue_date': payload['issue_date'],
             'maturity_date': payload['maturity_date'],
-            'number_of_annual_payments': payload['number_of_annual_payments'],
+            'unit': payload['unit'],
+            'frequency': payload['frequency'],
             'nature_of_bond': payload['nature_of_bond'],
     }
     asset_details = {
