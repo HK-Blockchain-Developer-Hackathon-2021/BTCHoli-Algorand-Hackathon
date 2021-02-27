@@ -143,7 +143,7 @@ export default function Dashboard() {
     const [open, setOpen] = React.useState(true);
     const [view, setView] = React.useState(ViewEnum.DASHBOARD);
     const [data, setData] = React.useState({transactionData: [], holdingData: [], chartData: [], dividendData:0});
-    const [isLoading, setIsLoading] = React.useState(true);
+    const [isLoading, setIsLoading] = React.useState(false);
 
     const handleDrawerOpen = () => {
         setOpen(true);

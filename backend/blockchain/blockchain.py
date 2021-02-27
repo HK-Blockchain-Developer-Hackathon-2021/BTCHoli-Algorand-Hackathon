@@ -4,12 +4,11 @@ from algosdk.future.transaction import AssetConfigTxn, AssetTransferTxn, AssetFr
 from blockchain.connect_network import algod_client
 from blockchain.utils import print_asset_holding, print_created_asset, wait_for_confirmation, process_payload
 from db_connection import db
+from blockchain.config import USDT_asset_id
 
 mnemonic1 = "other chief ill volcano wonder exercise neglect energy sell general spot kiwi what kiss lunar wrestle column prefer heavy gate quiz rubber oblige ability video"
 mnemonic2 = "hidden company cheap toe ready fish shock spread cost satisfy solution loud cereal tongue pig degree ice what ensure fan ill level wheat ability wait"
 mnemonic3 = "valve affair shoulder all exhaust evil small model tornado inspire crane army horse dismiss ridge book quiz tribe sport hero wild slab grape absent rebuild"
-
-USDT_asset_id = 14207586
 
 # For ease of reference, add account public and private keys to
 # an accounts dict.
@@ -174,3 +173,54 @@ def distribute_dividends(asset_info):
         wait_for_confirmation(algod_client, txid)
         # The balance should now be 10.
         print_asset_holding(algod_client, user_pk, USDT_asset_id)
+
+        # Save Dividend Transaction
+        db_dividend_tx = db.dividends.insert_one({
+            'user_id': user_mnemonic,
+            'amount': amount,
+            'asset_id': asset_info['asset_id']
+        })
+
+def p2p_order(buyer, seller, order_details):
+    params = algod_client.suggested_params()
+    buyer_pk = mnemonic.to_public_key(buyer)
+    buyer_sk = mnemonic.to_private_key(buyer)
+    seller_pk = mnemonic.to_public_key(seller)
+    seller_sk = mnemonic.to_private_key(seller)
+
+    # activate buyer's account
+    print("Activating Buyer's account")
+    activate_account(order_details['asset_id'], buyer)
+
+    # Token transaction
+    print("\n Executing Token Transaction")
+    token_txn = AssetTransferTxn(
+        sender=seller_pk,
+        sp=params,
+        receiver=buyer_pk,
+        amt=int(order_details['token_amount']),
+        index=order_details['asset_id'])
+    token_stxn = token_txn.sign(seller_sk)
+    token_txid = algod_client.send_transaction(token_stxn)
+    print(token_txid)
+    wait_for_confirmation(algod_client, token_txid)
+    print_asset_holding(algod_client, buyer_pk, order_details['asset_id'])
+
+    # Activating USDT for seller
+    print("Activating USDT for Seller")
+    activate_account(USDT_asset_id, seller)
+
+    # USDT Transaction
+    print("\n USDT Transaction")
+    usdt_txn = AssetTransferTxn(
+        sender=buyer_pk,
+        sp=params,
+        receiver=seller_pk,
+        amt=int(order_details['usdt_amount']),
+        index=USDT_asset_id)
+    usdt_stxn = usdt_txn.sign(buyer_sk)
+    usdt_txid = algod_client.send_transaction(usdt_stxn)
+    print(usdt_txid)
+    wait_for_confirmation(algod_client, usdt_txid)
+    print_asset_holding(algod_client, seller_pk, USDT_asset_id)
+

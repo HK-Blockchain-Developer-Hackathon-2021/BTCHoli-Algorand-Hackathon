@@ -190,6 +190,16 @@ export default function P2P(props) {
                 )
             })}
         </Paper>
+        <Paper className={classes.paper}>
+            <Typography component="h1" variant="h4" align="center">
+                Others Orders
+            </Typography>
+            {[0,1].map(() => {
+                return (
+                    <Card type="other"/>
+                )
+            })}
+        </Paper>
       </main>
     </React.Fragment>
   );
