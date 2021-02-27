@@ -55,14 +55,14 @@ export default function ComplexGrid(props) {
                         <b>Symbol: </b> {data.bond_name.substr(0,4).toUpperCase()}
                     </Typography>
                 </div>}
-                {data.nature_of_bond === 'multi' && <div>
-                    <Typography variant="body2">
-                        <b>Returns: </b> {Math.random()*100}
-                    </Typography>
-                </div>}
+                {/*{data.nature_of_bond === 'multi' && <div>*/}
+                {/*    <Typography variant="body2">*/}
+                {/*        <b>Returns: </b> {Math.random()*100}*/}
+                {/*    </Typography>*/}
+                {/*</div>}*/}
               </Grid>
               <Grid item>
-                <Button color="primary" variant="contained" onClick={() => {
+                <Button color="primary" variant="contained" style={{marginRight:"1vw"}} onClick={() => {
                     props.setBondData(data)
                     props.openModal();
                 }}>Buy</Button>
