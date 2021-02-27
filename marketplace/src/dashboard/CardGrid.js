@@ -46,7 +46,6 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function NestedGrid() {
-  console.log('chutioya')
   const classes = useStyles();
   const [modalStyle] = React.useState(getModalStyle);
   const [open, setOpen] = useState(false);

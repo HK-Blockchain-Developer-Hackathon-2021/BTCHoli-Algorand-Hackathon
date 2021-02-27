@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Paper from '@material-ui/core/Paper';
@@ -78,15 +78,26 @@ const Card = (props) => {
 } 
 
 
-
+const url = 'http://127.0.0.1:5000/getForm';
 export default function P2P(props) {
   const classes = useStyles();
-  const [bond, setBond] = React.useState(null)
+  const [bonds, setBonds] = React.useState([]);
+  const [bondSelected, setBond] = React.useState()
   const [usdt, setUsdt] = React.useState(0)
   const [tokens, setTokens] = React.useState(0)
   const [type, setType] = React.useState(null)
 
   // const [isResponse, setIsResponse] = React.useState(false);
+
+  useEffect(() => {
+    async function fetchData() {
+      const response = await axios.get(url);
+      const bonds = response.data.bonds;
+      setBonds(bonds);
+      console.log(bonds)
+    }
+    fetchData();
+  }, []);
 
   return (
     <React.Fragment>
@@ -105,16 +116,18 @@ export default function P2P(props) {
                                 <Select
                                     labelId="demo-simple-select-outlined-label"
                                     id="demo-simple-select-outlined"
-                                    value={bond}
+                                    value={bondSelected}
                                     style={{ width: 100 }}
                                     onChange={(e) => {
-                                    setBond(e.target.value)
+                                        setBond(e.target.value)
                                     }}
                                     label="Bond"
                                 >
-                                    <MenuItem value={"SELL"}>Sell</MenuItem>
-                                    <MenuItem value={"BUY"}>Buy</MenuItem>
-                                    
+                                {bonds.map((bond) => {
+                                    return (
+                                        <MenuItem value={bond._id}>{bond.bond_name}</MenuItem>
+                                    )
+                                })}
                                 </Select>
                         </FormControl>
                         </Grid>
@@ -171,7 +184,28 @@ export default function P2P(props) {
                     color="primary"
                     className={classes.button}
                     onClick={async () => {
-                        console.log('hahahah')
+                        console.log({
+                            userId: localStorage.getItem('mnemonic'),
+                            assetId: bonds.find((bond) => bond._id === bondSelected).asset_id,
+                            token_amount: tokens,
+                            usdt_amount: usdt,
+                            type: type
+                        })
+                        const url2 = 'http://localhost:5000/createOrder'
+                        const response = await axios.post(url2, {
+                            userId: localStorage.getItem('mnemonic'),
+                            assetId: bonds.find((bond) => bond._id === bondSelected).asset_id,
+                            tokenAmount: tokens,
+                            usdtAmount: usdt,
+                            type: type
+                        })
+                        if(response.data.message === 'done') {
+                            alert('submitted order')
+                            setBond()
+                            setUsdt(0)
+                            setTokens(0)
+                            setType(null)
+                        }
                     }}
                     >
                     Send Order    
