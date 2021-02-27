@@ -52,8 +52,8 @@ class give_bond_data(Resource):
         cursor = list(form.find({}))
 
         for cc in range (0,len(cursor)):
-            cursor[cc]['_id'] = str(cursor[0]['_id'])
-            cursor[cc]['created_at'] = str(cursor[0]['created_at'])
+            cursor[cc]['_id'] = str(cursor[cc]['_id'])
+            cursor[cc]['created_at'] = str(cursor[cc]['created_at'])
         
         return{
             "bonds": cursor
@@ -73,5 +73,6 @@ class update_bond(Resource):
             "message": "done",
             "asset_id": contract_id
         }
+
 
 
