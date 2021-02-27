@@ -36,6 +36,12 @@ export function MainListItems(props) {
                     </ListItemIcon>
                     <ListItemText primary="Refer a friend"/>
                 </ListItem>
+                <ListItem button onClick={() => handleClick(ViewEnum.P2P)}>
+                <ListItemIcon>
+                    <PeopleIcon />
+                </ListItemIcon>
+                <ListItemText primary="P2P Marketplace"/>
+            </ListItem>
                 {/*<ListItem button>*/}
                 {/*    <ListItemIcon>*/}
                 {/*        <PeopleIcon/>*/}
