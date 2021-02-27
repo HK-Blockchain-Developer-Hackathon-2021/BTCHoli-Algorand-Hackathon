@@ -9,62 +9,79 @@ import PeopleIcon from '@material-ui/icons/People';
 import BarChartIcon from '@material-ui/icons/BarChart';
 import LayersIcon from '@material-ui/icons/Layers';
 import AssignmentIcon from '@material-ui/icons/Assignment';
+import List from '@material-ui/core/List';
+import ViewEnum from "./ViewEnum";
 
-export const mainListItems = (
-  <div>
-    <ListItem button>
-      <ListItemIcon>
-        <DashboardIcon />
-      </ListItemIcon>
-      <ListItemText primary="Dashboard" />
-    </ListItem>
-    <ListItem button>
-      <ListItemIcon>
-        <ShoppingCartIcon />
-      </ListItemIcon>
-      <ListItemText primary="Orders" />
-    </ListItem>
-    <ListItem button>
-      <ListItemIcon>
-        <PeopleIcon />
-      </ListItemIcon>
-      <ListItemText primary="Customers" />
-    </ListItem>
-    <ListItem button>
-      <ListItemIcon>
-        <BarChartIcon />
-      </ListItemIcon>
-      <ListItemText primary="Reports" />
-    </ListItem>
-    <ListItem button>
-      <ListItemIcon>
-        <LayersIcon />
-      </ListItemIcon>
-      <ListItemText primary="Integrations" />
-    </ListItem>
-  </div>
-);
+export function MainListItems(props) {
 
-export const secondaryListItems = (
-  <div>
-    <ListSubheader inset>Saved reports</ListSubheader>
-    <ListItem button>
-      <ListItemIcon>
-        <AssignmentIcon />
-      </ListItemIcon>
-      <ListItemText primary="Current month" />
-    </ListItem>
-    <ListItem button>
-      <ListItemIcon>
-        <AssignmentIcon />
-      </ListItemIcon>
-      <ListItemText primary="Last quarter" />
-    </ListItem>
-    <ListItem button>
-      <ListItemIcon>
-        <AssignmentIcon />
-      </ListItemIcon>
-      <ListItemText primary="Year-end sale" />
-    </ListItem>
-  </div>
-);
+    let handleClick = (view) => {
+        console.log(view);
+        props.onClick(view);
+    }
+
+
+    return (<List>
+            <div>
+
+                <ListItem button onClick={() => handleClick(ViewEnum.DASHBOARD)}>
+                    <ListItemIcon>
+                        <DashboardIcon/>
+                    </ListItemIcon>
+                    <ListItemText primary="Dashboard" />
+                </ListItem>
+                <ListItem button onClick={() => handleClick(ViewEnum.ORDERNOW)}>
+                    <ListItemIcon>
+                        <ShoppingCartIcon/>
+                    </ListItemIcon>
+                    <ListItemText primary="Trade Now" />
+                </ListItem>
+                {/*<ListItem button>*/}
+                {/*    <ListItemIcon>*/}
+                {/*        <PeopleIcon/>*/}
+                {/*    </ListItemIcon>*/}
+                {/*    <ListItemText primary="Customers"/>*/}
+                {/*</ListItem>*/}
+                {/*<ListItem button>*/}
+                {/*    <ListItemIcon>*/}
+                {/*        <BarChartIcon/>*/}
+                {/*    </ListItemIcon>*/}
+                {/*    <ListItemText primary="Reports"/>*/}
+                {/*</ListItem>*/}
+                {/*<ListItem button>*/}
+                {/*    <ListItemIcon>*/}
+                {/*        <LayersIcon/>*/}
+                {/*    </ListItemIcon>*/}
+                {/*    <ListItemText primary="Integrations"/>*/}
+                {/*</ListItem>*/}
+            </div>
+        </List>
+    );
+}
+
+
+export const secondaryListItems = (<></>);
+// <div>
+//   <ListSubheader inset>Saved reports</ListSubheader>
+//   <ListItem button>
+//     <ListItemIcon>
+//       <AssignmentIcon />
+//     </ListItemIcon>
+//     <ListItemText primary="Current month" />
+//   </ListItem>
+//   <ListItem button>
+//     <ListItemIcon>
+//       <AssignmentIcon />
+//     </ListItemIcon>
+//     <ListItemText primary="Last quarter" />
+//   </ListItem>
+//   <ListItem button>
+//     <ListItemIcon>
+//       <AssignmentIcon />
+//     </ListItemIcon>
+{/*    <ListItemText primary="Year-end sale" />*/
+}
+{/*  </ListItem>*/
+}
+{/*</div>*/
+}
+// );
