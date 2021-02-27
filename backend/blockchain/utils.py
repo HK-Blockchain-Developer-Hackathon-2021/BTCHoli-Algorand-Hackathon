@@ -77,7 +77,7 @@ def print_asset_holding(algodclient, account, assetid):
 
 def get_number_of_seconds(unit, frequency):
     if frequency == "seconds":
-        return 1
+        return 10
     elif frequency == "minutes":
         return int(60/unit)
     elif frequency == "hourly":

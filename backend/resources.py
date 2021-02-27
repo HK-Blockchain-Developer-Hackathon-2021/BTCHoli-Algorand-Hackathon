@@ -1,7 +1,7 @@
 from flask_restful import Resource, reqparse
 from datetime import datetime
 from db_connection import db
-from blockchain.blockchain import create_asset, distribute_dividends
+from blockchain.blockchain import create_asset, distribute_dividends, transfer_asset, activate_account
 from blockchain.utils import get_number_of_seconds
 import json 
 from bson.objectid import ObjectId
@@ -95,11 +95,12 @@ class purchase_bond(Resource):
 
         tokens = (int(data['amount'])/bond['face_value'])*bond['issue_size']
 
+        activate_account(int(data['assetId']), data['userId'])
         transfer_asset(int(data['assetId']), data['userId'], tokens)
 
         tx_info = {
             'user_id': user['_id'],
-            'asset_id': data['assetId'],
+            'asset_id': int(data['assetId']),
             'amount': int(data['amount']),
             'tokens': tokens,
             'action': "BUY",
