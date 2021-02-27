@@ -22,6 +22,7 @@ import HashLoader from "react-spinners/HashLoader";
 import axios from "axios";
 
 import DetailsForm from './ReferralForm';
+import P2P from './P2P';
 
 
 const override = css`
@@ -241,6 +242,9 @@ export default function Dashboard() {
                             </div>
                             <div value={ViewEnum.REFERRAL} style={{ display: 'flex', flexDirection: 'row'}}>
                                 <DetailsForm />
+                            </div>
+                            <div value={ViewEnum.P2P} style={{ display: 'flex', flexDirection: 'row'}}>
+                                <P2P />
                             </div>
                         </Switch>
                     }

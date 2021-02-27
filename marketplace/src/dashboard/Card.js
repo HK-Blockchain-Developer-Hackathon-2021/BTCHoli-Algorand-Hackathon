@@ -31,7 +31,6 @@ const useStyles = makeStyles((theme) => ({
 export default function ComplexGrid(props) {
   const classes = useStyles();
   const data = props.bond
-  console.log(data)
   return (
     <div className={classes.root}>
       <Paper className={classes.paper}>
