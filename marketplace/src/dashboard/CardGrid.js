@@ -7,6 +7,7 @@ import Modal from '@material-ui/core/Modal';
 import { Button, TextField } from '@material-ui/core';
 import { CC } from '../cc/cc';
 import axios from 'axios';
+import building from '../images/building.jpg'
 
 const url = 'http://127.0.0.1:5000/getForm';
 
@@ -125,14 +126,19 @@ export default function NestedGrid() {
         aria-labelledby="simple-modal-title"
         aria-describedby="simple-modal-description"
       >
-        <div style={modalStyle} className={classes.paperTwo}>
-          {bondData.asset_id && <h4>Asset ID: {bondData.asset_id}</h4>}
-          <h4>Bond Name: {bondData.bond_name}</h4>
-          <h4>Coupon Rate: {bondData.coupon_rate}</h4>
-          <h4>Dividend Payment Time: {bondData.unit} {bondData.frequency}</h4>
-          <h4>Issue Size: {bondData.issue_size}</h4>
-          <h4>Issuer Name: {bondData.issuer_name}</h4>
-        </div>
+      <div style={{ ...modalStyle, display: 'flex', flexDirection: 'column'}} className={classes.paperTwo}>
+          <div>
+            {bondData.asset_id && <h4>Asset ID: {bondData.asset_id}</h4>}
+            <h4>Bond Name: {bondData.bond_name}</h4>
+            <h4>Coupon Rate: {bondData.coupon_rate}</h4>
+            <h4>Dividend Payment Time: {bondData.unit} {bondData.frequency}</h4>
+            <h4>Issue Size: {bondData.issue_size}</h4>
+            <h4>Issuer Name: {bondData.issuer_name}</h4>
+          </div>
+          <div>
+            <img src={building} style={{ height: '200px', width: '200px' }}/>
+          </div>
+      </div>
       </Modal>
         
     </div>
