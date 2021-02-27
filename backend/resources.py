@@ -174,7 +174,7 @@ class complete_order(Resource):
 
         dict_r = {'usdt_amount': order['usdt_amount'], 'token_amount': order['token_amount'], 'asset_id': order['asset_id']}
 
-        if order['type'] == "BUY":
+        if order['type'] == "SELL":
             buyer = data['userId']
             seller = order['user_id']
             p2p_order(buyer, seller, dict_r)
