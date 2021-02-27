@@ -27,9 +27,9 @@ function getModalStyle() {
 }
 
 const useStyles = makeStyles((theme) => ({
-    root: {
-      flexGrow: 1,
-    },
+  root: {
+    flexGrow: 1,
+  },
   paper: {
     padding: theme.spacing(1),
     textAlign: 'center',
@@ -93,10 +93,10 @@ export default function NestedGrid() {
   return (
     <div className={classes.root}>
       <Grid container spacing={1}>
-        <Grid container item xs={6} spacing={3} >
+        <Grid container xs={6} spacing={3} >
           <FormRow heading={"Individual Tokens"} openModal={openModal} openModal2={openModal2} setBondData={setBondData} bonds={normalbonds}/>
         </Grid>
-        <Grid container item xs={6} spacing={3}>
+        <Grid xs={6} spacing={6}>
           <FormRow heading={"Fund Tokens"} openModal={openModal} openModal2={openModal2} bonds={multibonds} setBondData={setBondData}/>
         </Grid>
       </Grid>
