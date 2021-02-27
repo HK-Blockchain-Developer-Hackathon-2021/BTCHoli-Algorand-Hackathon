@@ -112,8 +112,7 @@ class purchase_bond(Resource):
             "message": "done"
         }
 
-# class get_transaction(Resource):
-#     def get(self):
+
 
 
 
