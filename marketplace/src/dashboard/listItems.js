@@ -4,6 +4,7 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import DashboardIcon from '@material-ui/icons/Dashboard';
 import ShoppingCartIcon from '@material-ui/icons/ShoppingCart';
+import PeopleIcon from '@material-ui/icons/People';
 import List from '@material-ui/core/List';
 import ViewEnum from "./ViewEnum";
 
@@ -28,6 +29,12 @@ export function MainListItems(props) {
                         <ShoppingCartIcon/>
                     </ListItemIcon>
                     <ListItemText primary="Trade Now"/>
+                </ListItem>
+                <ListItem button onClick={() => handleClick(ViewEnum.REFERRAL)}>
+                    <ListItemIcon>
+                        <PeopleIcon />
+                    </ListItemIcon>
+                    <ListItemText primary="Refer a friend"/>
                 </ListItem>
                 {/*<ListItem button>*/}
                 {/*    <ListItemIcon>*/}

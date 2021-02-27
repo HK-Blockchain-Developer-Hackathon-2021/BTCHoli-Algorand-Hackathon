@@ -5,14 +5,15 @@ import Grid from '@material-ui/core/Grid';
 import ComplexGrid from './Card';
 import Modal from '@material-ui/core/Modal';
 import { Button } from '@material-ui/core';
+import { CC } from '../cc/cc';
 
 function rand() {
   return Math.round(Math.random() * 20) - 10;
 }
 
 function getModalStyle() {
-  const top = 50 + rand();
-  const left = 50 + rand();
+  const top = 50;
+  const left = 50;
 
   return {
     top: `${top}%`,
@@ -32,7 +33,7 @@ const useStyles = makeStyles((theme) => ({
   },
   paperTwo: {
     position: 'absolute',
-    width: 400,
+    width: 800,
     backgroundColor: theme.palette.background.paper,
     border: '2px solid #000',
     boxShadow: theme.shadows[5],
@@ -86,6 +87,7 @@ export default function NestedGrid() {
             <Button variant="contained" color="primary">
               Buy
             </Button>
+            <CC />
            </div>
         </Modal>
     </div>

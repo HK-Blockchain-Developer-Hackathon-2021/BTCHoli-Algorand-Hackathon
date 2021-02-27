@@ -49,6 +49,9 @@ export default function ComplexGrid(props) {
                 <Typography variant="body2">
                   <b>Price: </b> $19.00
                 </Typography>
+                <Typography variant="body2">
+                <b>Symbol: </b> VAR
+              </Typography>
               </Grid>
               <Grid item>
                 <Button color="primary" onClick={() => {

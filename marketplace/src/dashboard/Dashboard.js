@@ -24,6 +24,7 @@ import Chart from "react-google-charts";
 import ViewEnum from "./ViewEnum";
 import NestedGrid from './CardGrid';
 import Portfolio from "./Portfolio";
+import DetailsForm from './ReferralForm';
 
 
 const Switch = props => {
@@ -196,6 +197,9 @@ export default function Dashboard() {
                         </div>
                         <div value={ViewEnum.ORDERNOW} style={{ display: 'flex', flexDirection: 'row'}}>
                            <NestedGrid />
+                        </div>
+                        <div value={ViewEnum.REFERRAL} style={{ display: 'flex', flexDirection: 'row'}}>
+                            <DetailsForm />
                         </div>
                     </Switch>
                     <Box pt={4}>
