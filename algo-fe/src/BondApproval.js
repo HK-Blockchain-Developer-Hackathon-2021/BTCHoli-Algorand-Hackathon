@@ -100,7 +100,8 @@ function Row(props) {
                 More Info
               </Typography>
               <p><b>Issuer Name: </b> {row.issuer_name}</p>
-              <p><b>Number of Annual Payments: </b> {row.number_of_annual_payments}</p>
+              <p><b>Number of Annual Payments: </b> {row.unit}</p>
+              <p><b>Frequency: </b> {row.frequency}</p>
               <p><b>Nature of Bond: </b> {row.nature_of_bond}</p>
               <p><b>Issue Size: </b> {row.issue_size}</p>
             </Box>
