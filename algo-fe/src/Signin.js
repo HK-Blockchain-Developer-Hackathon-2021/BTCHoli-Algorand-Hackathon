@@ -58,23 +58,16 @@ const useStyles = makeStyles((theme) => ({
 export default function SignIn(props) {
   const classes = useStyles();
   const [userType, setUserType] = React.useState('Realtor');
-  const [address, setAddress] = React.useState('');
-  const [password, setPassword] = React.useState('');
+  const [mnemonic, setMnemonic] = React.useState('');
 
   const handleChange = (event) => {
     setUserType(event.target.value);
   };
 
-  const handleChangeAddress = (event) => {
-    setAddress(event.target.value)
-  }
-
-  const handlePasswordChange = (event) => {
-    setPassword(event.target.value)
-  }
 
   const nextPath = () => {
-    localStorage.setItem("address", address);
+    localStorage.setItem("mnenomic", mnemonic);
+    localStorage.setItem("userType", userType)
     // localStorage.setItem("password", password);
     props.history.push('/menu');
   }
@@ -95,24 +88,15 @@ export default function SignIn(props) {
             margin="normal"
             required
             fullWidth
-            id="email"
-            label="Email Address"
-            name="email"
-            autoComplete="email"
+            id="mnenomic"
+            label="mnenomic"
+            name="mnenomic"
+            autoComplete="mnenomic"
             autoFocus
-            onChange={handleChangeAddress}
-          />
-          <TextField
-            variant="outlined"
-            margin="normal"
-            required
-            fullWidth
-            name="password"
-            label="Password"
-            type="password"
-            id="password"
-            autoComplete="current-password"
-            onChange={handlePasswordChange}
+            value={mnemonic}
+            onChange={(e) => {
+              setMnemonic(e.target.value)
+            }}
           />
           <FormControl variant="outlined" className={classes.formControl}>
             <InputLabel id="demo-simple-select-outlined-label">Type</InputLabel>

@@ -48,7 +48,7 @@ function createData(_id, bond_name, coupon_rate, issuer_name, face_value, issue_
 }
 
 function Row(props) {
-  const { row } = props;
+  const { row, history } = props;
   const [open, setOpen] = React.useState(false);
   const classes = useRowStyles();
 
@@ -140,7 +140,7 @@ export default function BondApproval(props) {
         </TableHead>
         <TableBody>
           {rows.map((row) => (
-            <Row key={row._id} row={row} />
+            <Row key={row._id} row={row} history={props.history}/>
           ))}
         </TableBody>
       </Table>
