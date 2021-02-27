@@ -9,7 +9,6 @@ import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import Divider from '@material-ui/core/Divider';
 import IconButton from '@material-ui/core/IconButton';
-import Button from '@material-ui/core/Button';
 import Container from '@material-ui/core/Container';
 import Link from '@material-ui/core/Link';
 import MenuIcon from '@material-ui/icons/Menu';
@@ -17,9 +16,17 @@ import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import {MainListItems} from './listItems';
 import ViewEnum from "./ViewEnum";
 import Portfolio from "./Portfolio";
-
+import { css } from '@emotion/core';
+import HashLoader from "react-spinners/HashLoader";
 import axios from "axios";
 
+
+
+const override = css`
+    display: block;
+    margin: 0 auto;
+    border-color: red;
+`;
 
 const Switch = props => {
     const {test, children} = props
@@ -48,7 +55,7 @@ const useStyles = makeStyles((theme) => ({
         display: 'flex',
     },
     toolbar: {
-        paddingRight: 24, // keep right padding when drawer closed
+        paddingRight: 24,
     },
     toolbarIcon: {
         display: 'flex',
@@ -108,6 +115,7 @@ const useStyles = makeStyles((theme) => ({
         overflow: 'auto',
     },
     container: {
+        height:"100vh",
         paddingTop: theme.spacing(4),
         paddingBottom: theme.spacing(4),
     },
@@ -131,7 +139,8 @@ export default function Dashboard() {
     const classes = useStyles();
     const [open, setOpen] = React.useState(true);
     const [view, setView] = React.useState(ViewEnum.DASHBOARD);
-    const [data, setData] = React.useState({transactionData:[],holdingData:[],chartData:[]});
+    const [data, setData] = React.useState({transactionData: [], holdingData: [], chartData: [], dividendData:0});
+    const [isLoading, setIsLoading] = React.useState(true);
 
     const handleDrawerOpen = () => {
         setOpen(true);
@@ -148,15 +157,14 @@ export default function Dashboard() {
 
 
     const getData = () => {
-        console.log("getting data");
         axios.post("http://localhost:5000/getProfile", {
-            userId:"valve affair shoulder all exhaust evil small model tornado inspire crane army horse dismiss ridge book quiz tribe sport hero wild slab grape absent rebuild"
+            userId: "valve affair shoulder all exhaust evil small model tornado inspire crane army horse dismiss ridge book quiz tribe sport hero wild slab grape absent rebuild"
         })
             .then(res => {
                 const result = res.data;
                 const netWorth = data.chartData;
 
-                if(netWorth.length >= 100){
+                if (netWorth.length >= 100) {
                     netWorth.shift();
                 }
                 netWorth.push(result.netPortfolio);
@@ -164,10 +172,11 @@ export default function Dashboard() {
                 const d = {
                     holdingData: result.holdings,
                     transactionData: result.transactions,
-                    chartData: netWorth
+                    chartData: netWorth,
+                    dividendData:result.dividends
                 }
-
                 setData(d);
+                setIsLoading(false);
             })
     }
     const handleViewClick = (view) => {
@@ -191,7 +200,7 @@ export default function Dashboard() {
                     <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
                         Dashboard
                     </Typography>
-                    <Button variant="contained" color="default">View Wallet</Button>
+                    {/*<Button variant="contained" color="default">View Wallet</Button>*/}
                 </Toolbar>
             </AppBar>
             <Drawer
@@ -213,16 +222,23 @@ export default function Dashboard() {
             <main className={classes.content}>
                 <div className={classes.appBarSpacer}/>
                 <Container maxWidth="lg" className={classes.container}>
-                    <Switch test={view}>
-                        <div value={ViewEnum.DASHBOARD}>
-                            <Portfolio data={data}/>
-                        </div>
+                    {isLoading ?
+                        <div style={{ marginTop: "30vh", textAlign: "center" }}><HashLoader
+                            css={override}
+                            sizeUnit={"px"}
+                            size={150} color={'#123abc'}
+                        /><br /><h2>LOADING...</h2></div>
+                        :
+                        <Switch test={view}>
+                            <div value={ViewEnum.DASHBOARD}>
+                                <Portfolio data={data}/>
+                            </div>
 
-                        <div value={ViewEnum.ORDERNOW}>
-                            WHATTTTTTT
-                        </div>
-                    </Switch>
-
+                            <div value={ViewEnum.ORDERNOW}>
+                                WHATTTTTTT
+                            </div>
+                        </Switch>
+                    }
                     <Box pt={4}>
                         <Copyright/>
                     </Box>

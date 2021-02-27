@@ -7,7 +7,8 @@ import AssetWorth from "./AssetWorth";
 import React, {useEffect} from "react";
 import {makeStyles} from "@material-ui/core/styles";
 import clsx from "clsx";
-import {Chart as LineChart}from "./Chart";
+import {Chart as LineChart} from "./Chart";
+import Dividend from "./Dividend";
 
 
 const useStyles = makeStyles((theme) => ({
@@ -25,10 +26,16 @@ const useStyles = makeStyles((theme) => ({
         flexDirection: 'column',
         height: 300,
     },
-    fixedHeightPNL: {
-        height: 150,
+    chartPaper:{
+        display: 'flex',
+        overflow: 'auto',
+        flexDirection: 'column',
+        height: 300,
     },
-    fixedHeightChart:{
+    fixedHeightPNL: {
+        height: 145,
+    },
+    fixedHeightChart: {
         height: 300
     }
 
@@ -63,12 +70,15 @@ export default function Portfolio(props) {
     const [holdingData, setHoldingData] = React.useState([]);
     const [transactionData, setTransactionData] = React.useState([]);
     const [chartData, setChartData] = React.useState([]);
+    const [dividendData, setDividendData] = React.useState(0);
+
 
     useEffect(() => {
         setPieChartData(getPieChartData(props.data));
         setHoldingData(props.data.holdingData);
         setTransactionData(props.data.transactionData);
         setChartData(props.data.chartData);
+        setDividendData(props.data.dividendData)
     }, [props.data])
 
     return (
@@ -77,13 +87,22 @@ export default function Portfolio(props) {
                 <Paper className={fixedHeightChart}>
                     <LineChart chartData={chartData}/>
                 </Paper>
-
             </Grid>
 
             <Grid item xs={3}>
-                <Paper className={fixedHeightPNL}>
-                    <AssetWorth assetWorth={chartData[chartData.length - 1]}/>
-                </Paper>
+                <Grid container spacing={2} direction="column">
+                    <Grid item xs={12}>
+                        <Paper className={fixedHeightPNL}>
+                            <AssetWorth assetWorth={chartData[chartData.length - 1]}/>
+                        </Paper>
+                    </Grid>
+                    <Grid item xs={12}>
+                        <Paper className={fixedHeightPNL}>
+                            <Dividend dividend={dividendData}/>
+                        </Paper>
+                    </Grid>
+                </Grid>
+
             </Grid>
 
             <Grid item xs={6}>
@@ -94,6 +113,7 @@ export default function Portfolio(props) {
                         loader={<div>Loading Chart</div>}
                         data={pieChartData}
                         options={{
+                            title:"ASSET ALLOCATION",
                             is3D: true,
                         }}
                     />

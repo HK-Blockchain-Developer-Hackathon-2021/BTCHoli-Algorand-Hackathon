@@ -43,8 +43,8 @@ export default function Holdings(props) {
                     {data && data.map((row, index) => (
                         <TableRow key={index}>
                             <TableCell>{row.token}</TableCell>
-                            <TableCell align="right">{row.qty}</TableCell>
-                            <TableCell align="right">{row.amount}</TableCell>
+                            <TableCell align="right">{parseFloat(row.qty).toFixed(2)}</TableCell>
+                            <TableCell align="right">{parseFloat(row.amount).toFixed(2)}</TableCell>
                         </TableRow>
                     ))}
                 </TableBody>

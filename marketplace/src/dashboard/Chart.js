@@ -30,7 +30,7 @@ export function Chart(props) {
             left: 24,
           }}
         >
-          <XAxis dataKey="index" stroke={theme.palette.text.secondary} />
+          <XAxis dataKey="index" stroke={theme.palette.text.secondary} tick={false}/>
           <YAxis stroke={theme.palette.text.secondary}>
             <Label
               angle={270}
