@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import Link from '@material-ui/core/Link';
 import {makeStyles} from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
@@ -7,6 +7,7 @@ import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Title from './Title';
+import axios from "axios";
 
 // Generate Order Data
 function createData(order_no, token, side, price, quantity, time) {
@@ -39,6 +40,20 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function Transactions() {
+
+    // const [rows,setRows] = useState([]);
+    //
+    // const getRows = () => {
+    //     axios.get(`https://jsonplaceholder.typicode.com/users`)
+    //         .then(res => {
+    //             const persons = res.data;
+    //             this.setState({ persons });
+    //         })
+    // }
+
+
+
+
     const classes = useStyles();
     return (
         <React.Fragment>

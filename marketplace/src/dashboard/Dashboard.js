@@ -22,8 +22,8 @@ import PNL from './PNL';
 import Orders from './Orders';
 import Chart from "react-google-charts";
 import ViewEnum from "./ViewEnum";
-import SimpleCard from './CardGrid';
 import NestedGrid from './CardGrid';
+import Portfolio from "./Portfolio";
 
 
 const Switch = props => {
@@ -186,51 +186,13 @@ export default function Dashboard() {
                 <Divider/>
                 <MainListItems onClick={handleViewClick}/>
             </Drawer>
+
             <main className={classes.content}>
                 <div className={classes.appBarSpacer}/>
                 <Container maxWidth="lg" className={classes.container}>
-
                     <Switch test={view}>
                         <div value={ViewEnum.DASHBOARD}>
-                            <Grid container spacing={3}>
-                                <Grid item xs={6}>
-                                    <Paper className={classes.paper}>
-                                        <Chart
-                                            height="300px"
-                                            chartType="PieChart"
-                                            loader={<div>Loading Chart</div>}
-                                            data={[
-                                                ['Token', 'Value'],
-                                                ['Work', 11],
-                                                ['Eat', 2],
-                                                ['Commute', 2],
-                                                ['Watch TV', 2],
-                                                ['Sleep', 7],
-                                            ]}
-                                            options={{
-                                                title: '',
-                                                is3D: true,
-                                            }}
-                                            rootProps={{margin: 0}}
-                                        />
-                                    </Paper>
-                                </Grid>
-                                <Grid item xs={6}>
-                                    <Paper className={classes.paper}>
-                                        <Orders/>
-                                    </Paper>
-                                </Grid>
-                                <Grid item xs={12}>
-                                    <Paper className={classes.paper}>
-                                        <Transactions/>
-                                    </Paper>
-                                </Grid>
-                                <Grid item xs={4}>
-                                    <Paper className={fixedHeightPNL}>
-                                        <PNL/>
-                                    </Paper>
-                                </Grid>
-                            </Grid>
+                            <Portfolio/>
                         </div>
                         <div value={ViewEnum.ORDERNOW} style={{ display: 'flex', flexDirection: 'row'}}>
                            <NestedGrid />
@@ -242,6 +204,7 @@ export default function Dashboard() {
 
                 </Container>
             </main>
+
         </div>
     );
 }
