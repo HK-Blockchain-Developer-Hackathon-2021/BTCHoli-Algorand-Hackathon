@@ -21,6 +21,9 @@ import { css } from '@emotion/core';
 import HashLoader from "react-spinners/HashLoader";
 import axios from "axios";
 
+import { withRouter } from 'react-router';
+import queryString from 'query-string';
+
 import DetailsForm from './ReferralForm';
 import P2P from './P2P';
 
@@ -138,12 +141,12 @@ const useStyles = makeStyles((theme) => ({
 
 }));
 
-export default function Dashboard() {
+function Dashboard(props) {
     const classes = useStyles();
     const [open, setOpen] = React.useState(true);
     const [view, setView] = React.useState(ViewEnum.DASHBOARD);
     const [data, setData] = React.useState({transactionData: [], holdingData: [], chartData: [], dividendData:0});
-    const [isLoading, setIsLoading] = React.useState(false);
+    const [isLoading, setIsLoading] = React.useState(true);
 
     const handleDrawerOpen = () => {
         setOpen(true);
@@ -153,15 +156,17 @@ export default function Dashboard() {
     };
 
     useEffect(() => {
+        let params = props.match.params.userid;
+        localStorage.setItem("mnemonic", params);
         getData();
-        const timer = setInterval(() => getData(), 1000);
+        const timer = setInterval(() => getData(), 5000);
         return () => clearInterval(timer);
     }, [])
 
 
     const getData = () => {
         axios.post("http://localhost:5000/getProfile", {
-            userId: "valve affair shoulder all exhaust evil small model tornado inspire crane army horse dismiss ridge book quiz tribe sport hero wild slab grape absent rebuild"
+            userId:localStorage.getItem("mnemonic")
         })
             .then(res => {
                 const result = res.data;
@@ -257,3 +262,5 @@ export default function Dashboard() {
         </div>
     );
 }
+
+export default withRouter(Dashboard);

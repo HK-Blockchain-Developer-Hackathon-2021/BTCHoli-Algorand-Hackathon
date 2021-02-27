@@ -12,11 +12,15 @@
     "axios": "^0.21.1",
     "final-form": "^4.20.1",
     "payment": "^2.4.0",
+    "qs": "^6.7.0",
+    "query-string": "^4.3.4",
     "react": "^17.0.1",
     "react-credit-cards": "^0.8.3",
     "react-dom": "^17.0.1",
     "react-final-form": "^6.5.2",
     "react-google-charts": "^3.0.15",
+    "react-router": "^5.2.0",
+    "react-router-config": "^5.1.1",
     "react-scripts": "4.0.3",
     "react-spinners": "^0.10.6",
     "recharts": "^2.0.8",
@@ -46,5 +50,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "react-router-dom": "^5.2.0"
   }
 }

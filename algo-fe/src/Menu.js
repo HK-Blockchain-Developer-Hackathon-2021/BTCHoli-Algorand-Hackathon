@@ -19,6 +19,7 @@ export default function Menu(props) {
     props.history.push(path);
   }
 
+
   return (
     <div>
         <Paper variant="outlined" square elevation={10} />
@@ -42,7 +43,9 @@ export default function Menu(props) {
                     }}>
                         Approve Bonds
                     </Button>
-                    <Button variant="contained" color="primary">
+                    <Button variant="contained" color="primary" onClick={()=>{
+                        window.location.replace('http://localhost:3000/profile/'+localStorage.getItem("mnenomic"))
+                    }}>
                         Bond Market
                     </Button>
                 </div>

@@ -1,9 +1,9 @@
 import './App.css';
-import Dashboard from "./dashboard/Dashboard";
+import Router from "./Routes";
 import React from "react";
 
 function App() {
-    return <Dashboard/>
+    return <Router/>
 }
 
 export default App;
