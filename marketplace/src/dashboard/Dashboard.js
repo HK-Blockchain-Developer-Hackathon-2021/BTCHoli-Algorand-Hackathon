@@ -22,7 +22,6 @@ import HashLoader from "react-spinners/HashLoader";
 import axios from "axios";
 
 import { withRouter } from 'react-router';
-import queryString from 'query-string';
 
 import DetailsForm from './ReferralForm';
 import P2P from './P2P';

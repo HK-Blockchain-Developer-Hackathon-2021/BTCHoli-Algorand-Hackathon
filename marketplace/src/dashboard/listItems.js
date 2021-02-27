@@ -11,7 +11,6 @@ import ViewEnum from "./ViewEnum";
 export function MainListItems(props) {
 
     let handleClick = (view) => {
-        console.log(view);
         props.onClick(view);
     }
 
@@ -32,34 +31,16 @@ export function MainListItems(props) {
                 </ListItem>
                 <ListItem button onClick={() => handleClick(ViewEnum.REFERRAL)}>
                     <ListItemIcon>
-                        <PeopleIcon />
+                        <PeopleIcon/>
                     </ListItemIcon>
                     <ListItemText primary="Refer a friend"/>
                 </ListItem>
                 <ListItem button onClick={() => handleClick(ViewEnum.P2P)}>
-                <ListItemIcon>
-                    <PeopleIcon />
-                </ListItemIcon>
-                <ListItemText primary="P2P Marketplace"/>
-            </ListItem>
-                {/*<ListItem button>*/}
-                {/*    <ListItemIcon>*/}
-                {/*        <PeopleIcon/>*/}
-                {/*    </ListItemIcon>*/}
-                {/*    <ListItemText primary="Customers"/>*/}
-                {/*</ListItem>*/}
-                {/*<ListItem button>*/}
-                {/*    <ListItemIcon>*/}
-                {/*        <BarChartIcon/>*/}
-                {/*    </ListItemIcon>*/}
-                {/*    <ListItemText primary="Reports"/>*/}
-                {/*</ListItem>*/}
-                {/*<ListItem button>*/}
-                {/*    <ListItemIcon>*/}
-                {/*        <LayersIcon/>*/}
-                {/*    </ListItemIcon>*/}
-                {/*    <ListItemText primary="Integrations"/>*/}
-                {/*</ListItem>*/}
+                    <ListItemIcon>
+                        <PeopleIcon/>
+                    </ListItemIcon>
+                    <ListItemText primary="P2P Marketplace"/>
+                </ListItem>
             </div>
         </List>
     );
