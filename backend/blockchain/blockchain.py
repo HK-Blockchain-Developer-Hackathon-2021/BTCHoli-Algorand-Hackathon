@@ -4,12 +4,11 @@ from algosdk.future.transaction import AssetConfigTxn, AssetTransferTxn, AssetFr
 from blockchain.connect_network import algod_client
 from blockchain.utils import print_asset_holding, print_created_asset, wait_for_confirmation, process_payload
 from db_connection import db
+from blockchain.config import USDT_asset_id
 
 mnemonic1 = "other chief ill volcano wonder exercise neglect energy sell general spot kiwi what kiss lunar wrestle column prefer heavy gate quiz rubber oblige ability video"
 mnemonic2 = "hidden company cheap toe ready fish shock spread cost satisfy solution loud cereal tongue pig degree ice what ensure fan ill level wheat ability wait"
 mnemonic3 = "valve affair shoulder all exhaust evil small model tornado inspire crane army horse dismiss ridge book quiz tribe sport hero wild slab grape absent rebuild"
-
-USDT_asset_id = 14207586
 
 # For ease of reference, add account public and private keys to
 # an accounts dict.

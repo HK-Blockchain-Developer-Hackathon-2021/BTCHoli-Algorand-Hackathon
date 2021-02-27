@@ -1,5 +1,8 @@
+import numpy as np
 from flask_restful import Resource, reqparse
 from datetime import datetime
+
+from blockchain.config import USDT_asset_id
 from db_connection import db
 from blockchain.blockchain import create_asset, distribute_dividends, transfer_asset, activate_account
 from blockchain.utils import get_number_of_seconds
@@ -27,6 +30,10 @@ parser_trans.add_argument('userId', help = 'This field cannot be blank', require
 parser_trans.add_argument('assetId', help = 'This field cannot be blank', required = True)
 parser_trans.add_argument('amount', help = 'This field cannot be blank', required = True)
 
+parser_profile = reqparse.RequestParser()
+parser_profile.add_argument('userId', help = 'This field cannot be blank', required = True)
+
+
 class get_bond_data(Resource):
     def post(self):
         form = db.form
@@ -52,6 +59,7 @@ class get_bond_data(Resource):
             "message": "done"
         }
 
+
 class give_bond_data(Resource):
     def get(self):
         form = db.form
@@ -60,10 +68,12 @@ class give_bond_data(Resource):
         for cc in range (0,len(cursor)):
             cursor[cc]['_id'] = str(cursor[cc]['_id'])
             cursor[cc]['created_at'] = str(cursor[cc]['created_at'])
+            cursor[cc]['symbol'] = cursor[cc]['bond_name'][:3].upper()
         
         return{
             "bonds": cursor
         }
+
 
 class update_bond(Resource):
     def put(self):
@@ -96,6 +106,7 @@ class purchase_bond(Resource):
         tokens = (int(data['amount'])/bond['face_value'])*bond['issue_size']
 
         activate_account(int(data['assetId']), data['userId'])
+        activate_account(USDT_asset_id, data['userId'])
         transfer_asset(int(data['assetId']), data['userId'], tokens)
 
         tx_info = {
@@ -112,8 +123,38 @@ class purchase_bond(Resource):
             "message": "done"
         }
 
-# class get_transaction(Resource):
-#     def get(self):
+class get_profile(Resource):
+    def get(self):
+        data = parser_profile.parse_args()
+        user_memonic = data['userId']
+        user = db.user.find_one({'mnemonic': user_memonic})
+        transactions = [tx for tx in db.transaction.find({'user_id': user['_id']})]
+        for tx in transactions:
+            tx['_id'] = str(tx['_id'])
+            del tx['user_id']
+            tx['created_at'] = str(tx['created_at'])
+        netPortfolio = sum(tx['amount'] for tx in transactions)
+        difference = (np.random.uniform(0, 5)/100)
+        net_difference = difference if np.random.uniform(0, 1) > 0.5 else difference*(-1)
+        holdings = []
+        percentage_holdings = []
+        asset_ids = set([tx['asset_id'] for tx in transactions])
+        for asset_id in asset_ids:
+            asset_txs = [tx for tx in transactions if tx['asset_id'] == asset_id]
+            asset_symbol = db.form.find_one({'asset_id': int(asset_id)})['bond_name'][:3].upper()
+            amount = sum([tx['amount'] for tx in asset_txs])
+            holdings.append({
+                'token': asset_symbol,
+                'amount': amount,
+                'qty': sum(tx['tokens'] for tx in asset_txs)
+            })
+            percentage_holdings.append({'symbol': asset_symbol,   'percentage': amount/netPortfolio})
+        return {
+            'transactions': list(transactions),
+            'netPortfolio': netPortfolio*(1+net_difference),
+            'holdings': holdings,
+            'percentage_holdings': percentage_holdings
+        }
 
 
 
