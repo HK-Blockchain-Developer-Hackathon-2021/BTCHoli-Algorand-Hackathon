@@ -190,7 +190,7 @@ class complete_order(Resource):
             seller = data['userId']
             p2p_order(buyer, seller, dict_r)
 
-        db.orders.delete_one({'_id': str(order_id)})
+        db.orders.delete_one({'_id': order_id})
 
         return{
             "message":"done"
