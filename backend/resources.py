@@ -46,6 +46,9 @@ parser_comp = reqparse.RequestParser()
 parser_comp.add_argument('userId', help = 'This field cannot be blank', required = True)
 parser_comp.add_argument('orderId', help = 'This field cannot be blank', required = True)
 
+parser_send_order = reqparse.RequestParser()
+parser_send_order.add_argument('userId', help = 'This field cannot be blank', required = True)
+
 
 class get_bond_data(Resource):
     def post(self):
@@ -157,14 +160,18 @@ class create_order(Resource):
 
 class send_order(Resource):
     def get(self):
+        data = parser_send_order.parse_args()
+        user_id = data['userId']
         cursor = list(db.orders.find({}))
 
-        for cc in range (0,len(cursor)):
+        for cc in range(0, len(cursor)):
             cursor[cc]['_id'] = str(cursor[cc]['_id'])
 
-        return{
-            "orders": cursor
+        return {
+            'my_orders': [order for order in cursor if order['user_id'] == user_id],
+            'market_orders': [order for order in cursor if order['user_id'] != user_id]
         }
+
 
 class complete_order(Resource):
     def get(self):
@@ -182,6 +189,8 @@ class complete_order(Resource):
             buyer = order['user_id']
             seller = data['userId']
             p2p_order(buyer, seller, dict_r)
+
+        db.orders.delete_one({'_id': str(order_id)})
 
         return{
             "message":"done"
