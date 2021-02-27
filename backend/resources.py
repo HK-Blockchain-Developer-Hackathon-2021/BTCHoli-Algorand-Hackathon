@@ -1,7 +1,7 @@
 from flask_restful import Resource, reqparse
 from datetime import datetime
 from db_connection import db
-from blockchain.blockchain import create_asset, distribute_dividends, transfer_asset, activate_account
+from blockchain.blockchain import create_asset, distribute_dividends, transfer_asset, activate_account, p2p_order
 from blockchain.utils import get_number_of_seconds
 from bson.objectid import ObjectId
 from blockchain.utils import call_repeatedly
@@ -28,6 +28,17 @@ parser_trans = reqparse.RequestParser()
 parser_trans.add_argument('userId', help = 'This field cannot be blank', required = True)
 parser_trans.add_argument('assetId', help = 'This field cannot be blank', required = True)
 parser_trans.add_argument('amount', help = 'This field cannot be blank', required = True)
+
+parser_order = reqparse.RequestParser()
+parser_order.add_argument('userId', help = 'This field cannot be blank', required = True)
+parser_order.add_argument('assetId', help = 'This field cannot be blank', required = True)
+parser_order.add_argument('tokenAmount', help = 'This field cannot be blank', required = True)
+parser_order.add_argument('usdtAmount', help = 'This field cannot be blank', required = True)
+parser_order.add_argument('type', help = 'This field cannot be blank', required = True)
+
+parser_comp = reqparse.RequestParser()
+parser_comp.add_argument('userId', help = 'This field cannot be blank', required = True)
+parser_comp.add_argument('orderId', help = 'This field cannot be blank', required = True)
 
 
 class get_bond_data(Resource):
@@ -94,38 +105,79 @@ class stripe_check(Resource):
 
         data = parser_trans.parse_args()
         
-        # try:
-        info = stripe.Token.create(
-            card={
-                "number": 4242424242424242,
-                "exp_month": 8,
-                "exp_year": 25,
-                "cvc": 565,
-            })
-        card_token = info['id']
-    
-        payment = stripe.Charge.create(
-                amount= int(data['amount'])*100,                 
-                currency='usd',
-                description='Airport Bond',
-                source=info['id']
-                )
+        try:
+            info = stripe.Token.create(
+                card={
+                    "number": 4242424242424242,
+                    "exp_month": 8,
+                    "exp_year": 25,
+                    "cvc": 565,
+                })
+            payment = stripe.Charge.create(
+                    amount= int(data['amount'])*100,                 
+                    currency='usd',
+                    description='Airport Bond',
+                    source=info['id']
+                    )
+            
+            if payment['paid']:
+                tx = create_transaction(data)
+                return {
+                    "transaction_id": tx,
+                    "message": "done"
+                }
+            else:
+                return "gand marao"
+        except:
+            return("ille")
+
+class create_order(Resource):
+    def post(self):
+        data = parser_order.parse_args()
+
+        order_info ={
+            'user_id': data['userId'],
+            'asset_id': data['assetId'],
+            'token_amount': int(data['tokenAmount']),
+            'usdt_amount': int(data['usdtAmount']),
+            'type': data['type']
+        }
+        order_id = db.orders.insert(order_info)
+        return{
+            "message": "done"
+        }
+
+class send_order(Resource):
+    def get(self):
+        cursor = list(db.orders.find({}))
+
+        for cc in range (0,len(cursor)):
+            cursor[cc]['_id'] = str(cursor[cc]['_id'])
+
+        return{
+            "orders": cursor
+        }
+
+class complete_order(Resource):
+    def get(self):
+        data = parser_comp.parse_args()
+        order_id = ObjectId(data['orderId'])
+        order = dict(db.orders.find_one({'_id':order_id}))
+
+        dict_r = {'usdt_amount': order['usdt_amount'], 'token_amount': order['token_amount'], 'asset_id': order['asset_id']}
         
-        if payment['paid']:
-            tx = create_transaction(data)
-            return {
-                "transaction_id": tx,
-                "message": "done"
-            }
+        if order['type'] == "BUY":
+            buyer = data['userId']
+            seller = order['user_id']
+            p2p_order(buyer, seller, dict_r)
         else:
-            return "gand marao"
-        # except:
-        #     return("ille")
-
-# class create_order(Resource):
-#     def post(self):
-
-
+            buyer = order['user_id']
+            seller = data['userId']
+            p2p_order(buyer, seller, dict_r)
+            
+        return{
+            "message":"done"
+        }
 
 def create_transaction(data):
         bond = db.form.find_one({"asset_id":int(data['assetId'])})
