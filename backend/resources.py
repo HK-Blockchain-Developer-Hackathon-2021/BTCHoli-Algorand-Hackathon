@@ -1,5 +1,7 @@
 from flask_restful import Resource, reqparse
 from datetime import datetime
+import numpy as np
+from blockchain.config import USDT_asset_id
 from db_connection import db
 from blockchain.blockchain import create_asset, distribute_dividends, transfer_asset, activate_account, p2p_order
 from blockchain.utils import get_number_of_seconds
@@ -209,7 +211,7 @@ def create_transaction(data):
 
 
 class get_profile(Resource):
-    def get(self):
+    def post(self):
         data = parser_profile.parse_args()
         user_memonic = data['userId']
         user = db.user.find_one({'mnemonic': user_memonic})
