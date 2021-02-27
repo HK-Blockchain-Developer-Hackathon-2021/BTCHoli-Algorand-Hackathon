@@ -1,11 +1,13 @@
 from flask_restful import Resource, reqparse
 from datetime import datetime
-from app import db
-from blockchain.blockchain import create_asset, distribute_dividends, transfer_asset
+from db_connection import db
+from blockchain.blockchain import create_asset, distribute_dividends, transfer_asset, activate_account
 from blockchain.utils import get_number_of_seconds
-import json 
 from bson.objectid import ObjectId
 from blockchain.utils import call_repeatedly
+from flask import request
+import stripe
+import json 
 
 parser = reqparse.RequestParser()
 parser.add_argument('bondName', help = 'This field cannot be blank', required = True)
@@ -26,6 +28,7 @@ parser_trans = reqparse.RequestParser()
 parser_trans.add_argument('userId', help = 'This field cannot be blank', required = True)
 parser_trans.add_argument('assetId', help = 'This field cannot be blank', required = True)
 parser_trans.add_argument('amount', help = 'This field cannot be blank', required = True)
+
 
 class get_bond_data(Resource):
     def post(self):
@@ -87,35 +90,69 @@ class update_bond(Resource):
         }
 
 
-class purchase_bond(Resource):
+# class purchase_bond(Resource):
+#     def post(self):
+#         tx = db.transaction
+#         form = db.form
+#         data = parser_trans.parse_args()
+#         stripe_payment(data)
+#         return {
+#             "message": "done"
+#         }
+
+
+class stripe_check(Resource):
     def post(self):
-        tx = db.transaction
-        form = db.form
+        SECRET_KEY = "sk_test_51IP3SAISiEQTlbp6XG9ARetZmPB7AicRV7Ahxu98gkjmD2fmmOaFbdaXYm8Qxo7MvsvNhpZaqu2R0WfziuScKtLP00y2BAn9Hh"
+        stripe.api_key=SECRET_KEY
+
         data = parser_trans.parse_args()
-        bond = form.find_one({"asset_id":int(data['assetId'])})
+        
+        try:
+            info = stripe.Token.create(
+                card={
+                    "number": 4242424242424242,
+                    "exp_month": 8,
+                    "exp_year": 25,
+                    "cvc": 565,
+                })
+            card_token = info['id']
+        
+            payment = stripe.Charge.create(
+                    amount= int(data['amount'])*100,                 
+                    currency='usd',
+                    description='Airport Bond',
+                    source=info['id']
+                    )
+            
+            if payment['paid']:
+                create_transaction(data)
+                return {
+                    "message": "done"
+                }
+            else:
+                return "gand marao"
+        
+        except:
+            return("ille")
+
+
+
+def create_transaction(data):
+        bond = db.form.find_one({"asset_id":int(data['assetId'])})
         user = db.user.find_one({"mnemonic":data['userId']})
 
         tokens = (int(data['amount'])/bond['face_value'])*bond['issue_size']
 
+        activate_account(int(data['assetId']), data['userId'])
         transfer_asset(int(data['assetId']), data['userId'], tokens)
 
         tx_info = {
             'user_id': user['_id'],
-            'asset_id': data['assetId'],
+            'asset_id': int(data['assetId']),
             'amount': int(data['amount']),
             'tokens': tokens,
             'action': "BUY",
             'created_at': datetime.now()
         }
-        tx_id = tx.insert_one(tx_info)
-        
-        return {
-            "message": "done"
-        }
-
-# class get_transaction(Resource):
-#     def get(self):
-
-
-
-
+        tx_id = db.transaction.insert_one(tx_info)
