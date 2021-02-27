@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import clsx from 'clsx';
 import {makeStyles} from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -9,33 +9,35 @@ import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import Divider from '@material-ui/core/Divider';
 import IconButton from '@material-ui/core/IconButton';
-import Button from '@material-ui/core/Button';
 import Container from '@material-ui/core/Container';
-import Grid from '@material-ui/core/Grid';
-import Paper from '@material-ui/core/Paper';
 import Link from '@material-ui/core/Link';
 import MenuIcon from '@material-ui/icons/Menu';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
-import Transactions from "./transactions";
 import {MainListItems} from './listItems';
-import PNL from './PNL';
-import Orders from './Orders';
-import Chart from "react-google-charts";
 import ViewEnum from "./ViewEnum";
 import NestedGrid from './CardGrid';
 import Portfolio from "./Portfolio";
+import { css } from '@emotion/core';
+import HashLoader from "react-spinners/HashLoader";
+import axios from "axios";
+
 import DetailsForm from './ReferralForm';
 
 
+const override = css`
+    display: block;
+    margin: 0 auto;
+    border-color: red;
+`;
+
 const Switch = props => {
     const {test, children} = props
-    // filter out only children with a matching prop
     return children.find(child => {
         return child.props.value === test
     })
 }
 
-function Copyright() {
+const Copyright = () => {
     return (
         <Typography variant="body2" color="textSecondary" align="center">
             {'Copyright © '}
@@ -55,7 +57,7 @@ const useStyles = makeStyles((theme) => ({
         display: 'flex',
     },
     toolbar: {
-        paddingRight: 24, // keep right padding when drawer closed
+        paddingRight: 24,
     },
     toolbarIcon: {
         display: 'flex',
@@ -115,6 +117,7 @@ const useStyles = makeStyles((theme) => ({
         overflow: 'auto',
     },
     container: {
+        height:"100vh",
         paddingTop: theme.spacing(4),
         paddingBottom: theme.spacing(4),
     },
@@ -134,11 +137,13 @@ const useStyles = makeStyles((theme) => ({
 
 }));
 
-
 export default function Dashboard() {
     const classes = useStyles();
     const [open, setOpen] = React.useState(true);
     const [view, setView] = React.useState(ViewEnum.DASHBOARD);
+    const [data, setData] = React.useState({transactionData: [], holdingData: [], chartData: [], dividendData:0});
+    const [isLoading, setIsLoading] = React.useState(true);
+
     const handleDrawerOpen = () => {
         setOpen(true);
     };
@@ -146,8 +151,36 @@ export default function Dashboard() {
         setOpen(false);
     };
 
-    const fixedHeightPNL = clsx(classes.paper, classes.fixedHeightPNL);
+    useEffect(() => {
+        getData();
+        const timer = setInterval(() => getData(), 1000);
+        return () => clearInterval(timer);
+    }, [])
 
+
+    const getData = () => {
+        axios.post("http://localhost:5000/getProfile", {
+            userId: "valve affair shoulder all exhaust evil small model tornado inspire crane army horse dismiss ridge book quiz tribe sport hero wild slab grape absent rebuild"
+        })
+            .then(res => {
+                const result = res.data;
+                const netWorth = data.chartData;
+
+                if (netWorth.length >= 100) {
+                    netWorth.shift();
+                }
+                netWorth.push(result.netPortfolio);
+
+                const d = {
+                    holdingData: result.holdings,
+                    transactionData: result.transactions,
+                    chartData: netWorth,
+                    dividendData:result.dividends
+                }
+                setData(d);
+                setIsLoading(false);
+            })
+    }
     const handleViewClick = (view) => {
         setView(view);
     }
@@ -169,7 +202,7 @@ export default function Dashboard() {
                     <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
                         Dashboard
                     </Typography>
-                    <Button variant="contained" color="default">View Wallet</Button>
+                    {/*<Button variant="contained" color="default">View Wallet</Button>*/}
                 </Toolbar>
             </AppBar>
             <Drawer
@@ -191,21 +224,29 @@ export default function Dashboard() {
             <main className={classes.content}>
                 <div className={classes.appBarSpacer}/>
                 <Container maxWidth="lg" className={classes.container}>
-                    <Switch test={view}>
-                        <div value={ViewEnum.DASHBOARD}>
-                            <Portfolio/>
-                        </div>
-                        <div value={ViewEnum.ORDERNOW} style={{ display: 'flex', flexDirection: 'row'}}>
-                           <NestedGrid />
-                        </div>
-                        <div value={ViewEnum.REFERRAL} style={{ display: 'flex', flexDirection: 'row'}}>
-                            <DetailsForm />
-                        </div>
-                    </Switch>
+                    {isLoading ?
+                        <div style={{ marginTop: "30vh", textAlign: "center" }}><HashLoader
+                            css={override}
+                            sizeUnit={"px"}
+                            size={150} color={'#123abc'}
+                        /><br /><h2>LOADING...</h2></div>
+                        :
+                        <Switch test={view}>
+                            <div value={ViewEnum.DASHBOARD}>
+                                <Portfolio data={data}/>
+                            </div>
+
+                            <div value={ViewEnum.ORDERNOW} style={{ display: 'flex', flexDirection: 'row'}}>
+                                <NestedGrid />
+                            </div>
+                            <div value={ViewEnum.REFERRAL} style={{ display: 'flex', flexDirection: 'row'}}>
+                                <DetailsForm />
+                            </div>
+                        </Switch>
+                    }
                     <Box pt={4}>
                         <Copyright/>
                     </Box>
-
                 </Container>
             </main>
 

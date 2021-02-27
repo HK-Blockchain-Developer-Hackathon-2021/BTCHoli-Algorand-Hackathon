@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect} from 'react';
 import Link from '@material-ui/core/Link';
 import {makeStyles} from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
@@ -8,8 +8,6 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Title from './Title';
 
-
-
 function preventDefault(event) {
     event.preventDefault();
 }
@@ -18,57 +16,42 @@ const useStyles = makeStyles((theme) => ({
     seeMore: {
         marginTop: theme.spacing(3),
     },
-    buy: {
-        color: "green"
-    },
-    sell: {
-        color: "red"
-    }
 }));
 
-export default function Transactions(props) {
+export default function Holdings(props) {
     const classes = useStyles();
 
-    const [transactionData, setTransactionData] = useState([]);
+    const [data, setData] = React.useState(props.holdingData);
 
-    useEffect(()=>{
-        setTransactionData(props.transactionData)
-    },[props])
+    useEffect(() => {
+        setData(props.holdingData)
+    }, [props.holdingData])
 
 
     return (
         <React.Fragment>
-            <Title>Transaction History</Title>
+            <Title>Holdings</Title>
             <Table size="small">
                 <TableHead>
                     <TableRow>
                         <TableCell>Token</TableCell>
-                        <TableCell>Side</TableCell>
-                        <TableCell align="right">Price</TableCell>
                         <TableCell align="right">Quantity</TableCell>
-                        <TableCell align="right">Total</TableCell>
-                        <TableCell>Time</TableCell>
+                        <TableCell align="right">Value</TableCell>
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {transactionData && transactionData.map((row) => (
-                        <TableRow key={row._id}>
+                    {data && data.map((row, index) => (
+                        <TableRow key={index}>
                             <TableCell>{row.token}</TableCell>
-                            <TableCell
-                                className={row.action.startsWith("B") ? classes.buy : classes.sell}>
-                                {row.action}
-                            </TableCell>
-                            <TableCell align="right">{2}</TableCell>
                             <TableCell align="right">{parseFloat(row.qty).toFixed(2)}</TableCell>
                             <TableCell align="right">{parseFloat(row.amount).toFixed(2)}</TableCell>
-                            <TableCell>{row.created_at}</TableCell>
                         </TableRow>
                     ))}
                 </TableBody>
             </Table>
             <div className={classes.seeMore}>
                 <Link color="primary" href="#" onClick={preventDefault}>
-                    See more transactions
+                    See more tokens
                 </Link>
             </div>
         </React.Fragment>
