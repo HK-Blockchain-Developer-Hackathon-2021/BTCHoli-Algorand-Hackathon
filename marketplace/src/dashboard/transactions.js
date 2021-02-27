@@ -7,7 +7,6 @@ import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Title from './Title';
-import axios from "axios";
 
 
 
@@ -53,16 +52,16 @@ export default function Transactions(props) {
                 </TableHead>
                 <TableBody>
                     {transactionData && transactionData.map((row) => (
-                        <TableRow key={row.order_no}>
+                        <TableRow key={row._id}>
                             <TableCell>{row.token}</TableCell>
                             <TableCell
-                                className={row.side.startsWith("B") ? classes.buy : classes.sell}>
-                                {row.side}
+                                className={row.action.startsWith("B") ? classes.buy : classes.sell}>
+                                {row.action}
                             </TableCell>
-                            <TableCell align="right">{row.price}</TableCell>
-                            <TableCell align="right">{row.quantity}</TableCell>
-                            <TableCell align="right">{row.total}</TableCell>
-                            <TableCell>{row.time}</TableCell>
+                            <TableCell align="right">{2}</TableCell>
+                            <TableCell align="right">{row.qty}</TableCell>
+                            <TableCell align="right">{row.amount}</TableCell>
+                            <TableCell>{row.created_at}</TableCell>
                         </TableRow>
                     ))}
                 </TableBody>

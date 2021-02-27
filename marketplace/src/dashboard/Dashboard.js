@@ -127,54 +127,11 @@ const useStyles = makeStyles((theme) => ({
 
 }));
 
-
-function createData(id, token, quantity, value) {
-    return {id, token, quantity, value};
-}
-
-const rows = [
-    createData(0, 'ABC', 10, 312.44),
-    createData(1, 'DEF', 12, 866.99),
-    createData(2, 'GHI', 23, 100.81),
-    createData(3, 'SFD', 23, 654.39),
-    createData(4, 'WFE', 43, 212.79),
-];
-
-
-function createChartRows(time, amount) {
-    return {time, amount};
-}
-
-const chartRows = [
-    createChartRows('00:00', 0),
-    createChartRows('03:00', 300),
-    createChartRows('06:00', 600),
-    createChartRows('09:00', 800),
-    createChartRows('12:00', 1500),
-    createChartRows('15:00', 2000),
-    createChartRows('18:00', 2400),
-    createChartRows('21:00', 2400),
-    createChartRows('24:00', undefined),
-];
-
-function createTransactionData(order_no, token, side, price, quantity, time) {
-    let total = price * quantity;
-    return {order_no, token, side, price, quantity, total, time};
-}
-
-const transactionRows = [
-    createTransactionData(0, 'ABC', "BUY", 312.44, 10, "10:12:32"),
-    createTransactionData(1, 'DEF', "SELL", 866.99, 32, "10:12:32"),
-    createTransactionData(2, 'GHI', "SELL", 100.81, 413, "10:12:32"),
-    createTransactionData(3, 'SFD', "BUY", 654.39, 14, "10:12:32"),
-    createTransactionData(4, 'WFE', "SELL", 212.79, 4123, "10:12:32")
-];
-
 export default function Dashboard() {
     const classes = useStyles();
     const [open, setOpen] = React.useState(true);
     const [view, setView] = React.useState(ViewEnum.DASHBOARD);
-    const [data, setData] = React.useState({});
+    const [data, setData] = React.useState({transactionData:[],holdingData:[],chartData:[]});
 
     const handleDrawerOpen = () => {
         setOpen(true);
@@ -184,18 +141,34 @@ export default function Dashboard() {
     };
 
     useEffect(() => {
-        // const timer = setInterval(() => getData(), 1000);
-        // return () => clearInterval(timer);
+        getData();
+        const timer = setInterval(() => getData(), 1000);
+        return () => clearInterval(timer);
     }, [])
 
 
     const getData = () => {
-        // console.log("getting data");
-        // axios.get("")
-        //     .then(res => {
-        //         const d = res.data;
-        //         setData(d);
-        //     })
+        console.log("getting data");
+        axios.post("http://localhost:5000/getProfile", {
+            userId:"valve affair shoulder all exhaust evil small model tornado inspire crane army horse dismiss ridge book quiz tribe sport hero wild slab grape absent rebuild"
+        })
+            .then(res => {
+                const result = res.data;
+                const netWorth = data.chartData;
+
+                if(netWorth.length >= 100){
+                    netWorth.shift();
+                }
+                netWorth.push(result.netPortfolio);
+
+                const d = {
+                    holdingData: result.holdings,
+                    transactionData: result.transactions,
+                    chartData: netWorth
+                }
+
+                setData(d);
+            })
     }
     const handleViewClick = (view) => {
         setView(view);

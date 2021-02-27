@@ -10,8 +10,10 @@ export function Chart(props) {
   const [chartData,setChartData] = useState([]);
 
   useEffect(()=>{
-      setChartData(props.chartData);
-      console.log(props.chartData);
+      const result = props.chartData.map((elem, index)=>{
+         return {index, elem}
+      })
+      setChartData(result);
   },[props])
 
 
@@ -28,17 +30,16 @@ export function Chart(props) {
             left: 24,
           }}
         >
-          <XAxis dataKey="time" stroke={theme.palette.text.secondary} />
+          <XAxis dataKey="index" stroke={theme.palette.text.secondary} />
           <YAxis stroke={theme.palette.text.secondary}>
             <Label
               angle={270}
               position="left"
               style={{ textAnchor: 'middle', fill: theme.palette.text.primary }}
-            >
-              Sales ($)
+            >Worth ($)
             </Label>
           </YAxis>
-          <Line type="monotone" dataKey="amount" stroke={theme.palette.primary.main} dot={false} />
+          <Line type="monotone" dataKey="elem" stroke={theme.palette.primary.main} dot={false} />
         </LineChart>
       </ResponsiveContainer>
     </React.Fragment>

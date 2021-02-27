@@ -3,7 +3,7 @@ import Paper from "@material-ui/core/Paper";
 import Chart from "react-google-charts";
 import Holdings from "./Holdings";
 import Transactions from "./transactions";
-import PNL from "./PNL";
+import AssetWorth from "./AssetWorth";
 import React, {useEffect} from "react";
 import {makeStyles} from "@material-ui/core/styles";
 import clsx from "clsx";
@@ -39,7 +39,7 @@ const getPieChartData = (data) => {
     let pieChartData = [];
 
     if (data !== undefined && data.holdingData !== undefined && data.holdingData.length !== 0) {
-        let keys = ["token", "value"];
+        let keys = ["token", "amount"];
         pieChartData.push(keys);
         data.holdingData.forEach(element => {
             let entry = [];
@@ -68,17 +68,22 @@ export default function Portfolio(props) {
         setPieChartData(getPieChartData(props.data));
         setHoldingData(props.data.holdingData);
         setTransactionData(props.data.transactionData);
-        console.log(props.data.chartData);
         setChartData(props.data.chartData);
     }, [props.data])
 
     return (
         <Grid container spacing={3}>
-            <Grid item xs={12}>
+            <Grid item xs={9}>
                 <Paper className={fixedHeightChart}>
                     <LineChart chartData={chartData}/>
                 </Paper>
 
+            </Grid>
+
+            <Grid item xs={3}>
+                <Paper className={fixedHeightPNL}>
+                    <AssetWorth assetWorth={chartData[chartData.length - 1]}/>
+                </Paper>
             </Grid>
 
             <Grid item xs={6}>
@@ -104,11 +109,7 @@ export default function Portfolio(props) {
                     <Transactions transactionData={transactionData}/>
                 </Paper>
             </Grid>
-            <Grid item xs={4}>
-                <Paper className={fixedHeightPNL}>
-                    <PNL/>
-                </Paper>
-            </Grid>
+
         </Grid>
     );
 

@@ -40,11 +40,11 @@ export default function Holdings(props) {
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {data && data.map((row) => (
-                        <TableRow key={row.id}>
+                    {data && data.map((row, index) => (
+                        <TableRow key={index}>
                             <TableCell>{row.token}</TableCell>
-                            <TableCell align="right">{row.quantity}</TableCell>
-                            <TableCell align="right">{row.value}</TableCell>
+                            <TableCell align="right">{row.qty}</TableCell>
+                            <TableCell align="right">{row.amount}</TableCell>
                         </TableRow>
                     ))}
                 </TableBody>
