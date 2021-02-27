@@ -164,8 +164,11 @@ class send_order(Resource):
         user_id = data['userId']
         cursor = list(db.orders.find({}))
 
+
         for cc in range(0, len(cursor)):
             cursor[cc]['_id'] = str(cursor[cc]['_id'])
+            asset = dict(db.form.find_one({'asset_id':int(cursor[cc]['asset_id'])}))
+            cursor[cc]['asset_id'] = asset['bond_name']
 
         return {
             'my_orders': [order for order in cursor if order['user_id'] == user_id],
