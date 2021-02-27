@@ -1,6 +1,6 @@
 from flask_restful import Resource, reqparse
 from datetime import datetime
-from app import db
+from db_connection import db
 from blockchain.blockchain import create_asset, distribute_dividends
 from blockchain.utils import get_number_of_seconds
 import json 
