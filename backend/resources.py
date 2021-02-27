@@ -155,9 +155,13 @@ class get_profile(Resource):
                 'qty': qty
             })
             percentage_holdings.append({'symbol': asset_symbol, 'percentage': amount / net_portfolio})
+
+        dividends = sum([tx['amount'] for tx in db.dividends.find({}) if tx['user_id'] == user_memonic])
+
         return {
             'transactions': list(transactions),
             'netPortfolio': net_portfolio * (1 + net_difference),
             'holdings': holdings,
-            'percentage_holdings': percentage_holdings
+            'percentage_holdings': percentage_holdings,
+            'dividends': dividends
         }

@@ -173,3 +173,47 @@ def distribute_dividends(asset_info):
         wait_for_confirmation(algod_client, txid)
         # The balance should now be 10.
         print_asset_holding(algod_client, user_pk, USDT_asset_id)
+
+        # Save Dividend Transaction
+        db_dividend_tx = db.dividends.insert_one({
+            'user_id': user_mnemonic,
+            'amount': amount,
+            'asset_id': asset_info['asset_id']
+        })
+
+def p2p_order(buyer, seller, order_details):
+    params = algod_client.suggested_params()
+    buyer_pk = mnemonic.to_public_key(buyer)
+    buyer_sk = mnemonic.to_private_key(buyer)
+    seller_pk = mnemonic.to_public_key(seller)
+    seller_sk = mnemonic.to_private_key(seller)
+
+    # Token transaction
+    print("\n Executing Token Transaction")
+    token_txn = AssetTransferTxn(
+        sender=seller_pk,
+        sp=params,
+        receiver=buyer_pk,
+        amt=int(order_details['token_amount']),
+        index=order_details['asset_id'])
+    token_stxn = token_txn.sign(seller_sk)
+    token_txid = algod_client.send_transaction(token_stxn)
+    print(token_txid)
+    wait_for_confirmation(algod_client, token_txid)
+    print_asset_holding(algod_client, buyer_pk, order_details['asset_id'])
+
+    # Calculate - USDT_Amount
+
+    # USDT Transaction
+    print("\n USDT Transaction")
+    usdt_txn = AssetTransferTxn(
+        sender=buyer_pk,
+        sp=params,
+        receiver=seller_pk,
+        amt=int(order_details['usdt_amount']),
+        index=USDT_asset_id)
+    usdt_stxn = usdt_txn.sign(buyer_sk)
+    usdt_txid = algod_client.send_transaction(usdt_stxn)
+    print(usdt_txid)
+    wait_for_confirmation(algod_client, usdt_txid)
+    print_asset_holding(algod_client, seller_pk, order_details[USDT_asset_id])
