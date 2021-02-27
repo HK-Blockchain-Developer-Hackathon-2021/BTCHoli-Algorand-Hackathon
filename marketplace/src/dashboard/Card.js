@@ -30,7 +30,8 @@ const useStyles = makeStyles((theme) => ({
 
 export default function ComplexGrid(props) {
   const classes = useStyles();
-
+  const data = props.bond
+  console.log(data)
   return (
     <div className={classes.root}>
       <Paper className={classes.paper}>
@@ -44,19 +45,31 @@ export default function ComplexGrid(props) {
             <Grid item xs container direction="column" spacing={2}>
               <Grid item xs>
                 <Typography variant="body2" gutterBottom>
-                  <b>Name: </b> Varun Bond
+                  <b>Name: </b> {data.bond_name}
                 </Typography>
-                <Typography variant="body2">
-                  <b>Price: </b> $19.00
-                </Typography>
-                <Typography variant="body2">
-                <b>Symbol: </b> VAR
-              </Typography>
+                {data.nature_of_bond !== 'multi' && <div>
+                    <Typography variant="body2">
+                    <b>Price: </b> {data.face_value/data.issue_size}
+                    </Typography>
+                    <Typography variant="body2">
+                        <b>Symbol: </b> {data.bond_name.substr(0,4).toUpperCase()}
+                    </Typography>
+                </div>}
+                {data.nature_of_bond === 'multi' && <div>
+                    <Typography variant="body2">
+                        <b>Returns: </b> {Math.random()*100}
+                    </Typography>
+                </div>}
               </Grid>
               <Grid item>
-                <Button color="primary" onClick={() => {
+                <Button color="primary" variant="contained" onClick={() => {
+                    props.setBondData(data)
                     props.openModal();
-                }}>Additional Details</Button>
+                }}>Buy</Button>
+                <Button color="primary" variant="contained" onClick={() => {
+                    props.setBondData(data)
+                    props.openModal2();
+                }}>Learn More</Button>
               </Grid>
             </Grid>
           </Grid>
