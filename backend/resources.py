@@ -1,11 +1,11 @@
 from flask_restful import Resource, reqparse
 from datetime import datetime
 from app import db
-from blockchain.blockchain import create_asset, distribute_dividends
+from blockchain.blockchain import create_asset, distribute_dividends, transfer_asset
 from blockchain.utils import get_number_of_seconds
 import json 
 from bson.objectid import ObjectId
-import threading
+from blockchain.utils import call_repeatedly
 
 parser = reqparse.RequestParser()
 parser.add_argument('bondName', help = 'This field cannot be blank', required = True)
@@ -77,8 +77,9 @@ class update_bond(Resource):
         form.update({"_id":id},{"$set": { "is_signed" : True, "asset_id" : contract_id}})
 
         asset_info = form.find_one({"_id":id})
-        repeat_seconds = get_number_of_seconds(asset_info['unit'], ['frequency'])
-        threading.Timer(repeat_seconds, distribute_dividends(asset_info))
+        repeat_seconds = get_number_of_seconds(asset_info['unit'], asset_info['frequency'])
+        print("Frequency: ", repeat_seconds)
+        call_repeatedly(repeat_seconds, distribute_dividends, asset_info)
 
         return{
             "message": "done",
@@ -94,11 +95,15 @@ class purchase_bond(Resource):
         bond = form.find_one({"asset_id":int(data['assetId'])})
         user = db.user.find_one({"mnemonic":data['userId']})
 
+        tokens = (int(data['amount'])/bond['face_value'])*bond['issue_size']
+
+        transfer_asset(int(data['assetId']), data['userId'], tokens)
+
         tx_info = {
             'user_id': user['_id'],
             'asset_id': data['assetId'],
             'amount': int(data['amount']),
-            'tokens': (int(data['amount'])/bond['face_value'])*bond['issue_size'],
+            'tokens': tokens,
             'action': "BUY",
             'created_at': datetime.now()
         }
