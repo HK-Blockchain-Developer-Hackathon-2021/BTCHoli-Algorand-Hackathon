@@ -133,6 +133,8 @@ class get_profile(Resource):
             tx['_id'] = str(tx['_id'])
             del tx['user_id']
             tx['created_at'] = str(tx['created_at'])
+            tx['token'] = db.form.find_one({'asset_id': int(tx['asset_id'])})['bond_name'][:3].upper()
+            tx['qty'] = tx['tokens']
         netPortfolio = sum(tx['amount'] for tx in transactions)
         difference = (np.random.uniform(0, 5)/100)
         net_difference = difference if np.random.uniform(0, 1) > 0.5 else difference*(-1)
