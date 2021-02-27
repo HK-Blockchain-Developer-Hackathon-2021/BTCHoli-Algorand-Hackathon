@@ -1,9 +1,11 @@
 from flask_restful import Resource, reqparse
 from datetime import datetime
 from app import db
-from blockchain.blockchain import create_asset
+from blockchain.blockchain import create_asset, distribute_dividends
+from blockchain.utils import get_number_of_seconds
 import json 
 from bson.objectid import ObjectId
+import threading
 
 parser = reqparse.RequestParser()
 parser.add_argument('bondName', help = 'This field cannot be blank', required = True)
@@ -69,9 +71,12 @@ class update_bond(Resource):
         data = parser_update.parse_args()
         id = ObjectId(data['bondId'])
         cursor = form.find_one({"_id":id})
-
         contract_id = create_asset(cursor)
         form.update({"_id":id},{"$set": { "is_signed" : True, "asset_id" : contract_id}})
+
+        asset_info = form.find_one({"_id":id})
+        repeat_seconds = get_number_of_seconds(asset_info['unit'], ['frequency'])
+        threading.Timer(repeat_seconds, distribute_dividends(asset_info))
 
         return{
             "message": "done",
