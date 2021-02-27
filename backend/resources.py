@@ -53,6 +53,7 @@ class give_bond_data(Resource):
 
         for cc in range (0,len(cursor)):
             cursor[cc]['_id'] = str(cursor[0]['_id'])
+            cursor[cc]['created_at'] = str(cursor[0]['created_at'])
         
         return{
             "bonds": cursor
