@@ -37,7 +37,8 @@ class get_bond_data(Resource):
             'nature_of_bond': data['natureOfBond'],
             'issue_size': int(data['issueSize']),
             'is_signed': False,
-            'asset_id': None
+            'asset_id': None,
+            'created_at': datetime.now()
         }
         bond_id = form.insert_one(bond_info)
         
