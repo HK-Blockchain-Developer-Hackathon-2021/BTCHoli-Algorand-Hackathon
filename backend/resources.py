@@ -89,18 +89,6 @@ class update_bond(Resource):
             "asset_id": contract_id
         }
 
-
-# class purchase_bond(Resource):
-#     def post(self):
-#         tx = db.transaction
-#         form = db.form
-#         data = parser_trans.parse_args()
-#         stripe_payment(data)
-#         return {
-#             "message": "done"
-#         }
-
-
 class stripe_check(Resource):
     def post(self):
         SECRET_KEY = "sk_test_51IP3SAISiEQTlbp6XG9ARetZmPB7AicRV7Ahxu98gkjmD2fmmOaFbdaXYm8Qxo7MvsvNhpZaqu2R0WfziuScKtLP00y2BAn9Hh"
@@ -108,33 +96,36 @@ class stripe_check(Resource):
 
         data = parser_trans.parse_args()
         
-        try:
-            info = stripe.Token.create(
-                card={
-                    "number": 4242424242424242,
-                    "exp_month": 8,
-                    "exp_year": 25,
-                    "cvc": 565,
-                })
-            card_token = info['id']
+        # try:
+        info = stripe.Token.create(
+            card={
+                "number": 4242424242424242,
+                "exp_month": 8,
+                "exp_year": 25,
+                "cvc": 565,
+            })
+        card_token = info['id']
+    
+        payment = stripe.Charge.create(
+                amount= int(data['amount'])*100,                 
+                currency='usd',
+                description='Airport Bond',
+                source=info['id']
+                )
         
-            payment = stripe.Charge.create(
-                    amount= int(data['amount'])*100,                 
-                    currency='usd',
-                    description='Airport Bond',
-                    source=info['id']
-                    )
-            
-            if payment['paid']:
-                create_transaction(data)
-                return {
-                    "message": "done"
-                }
-            else:
-                return "gand marao"
-        
-        except:
-            return("ille")
+        if payment['paid']:
+            tx = create_transaction(data)
+            return {
+                "transaction_id": tx,
+                "message": "done"
+            }
+        else:
+            return "gand marao"
+        # except:
+        #     return("ille")
+
+# class create_order(Resource):
+#     def post(self):
 
 
 
@@ -155,4 +146,5 @@ def create_transaction(data):
             'action': "BUY",
             'created_at': datetime.now()
         }
-        tx_id = db.transaction.insert_one(tx_info)
+        tx = db.transaction.insert(tx_info)
+        return(str(tx))

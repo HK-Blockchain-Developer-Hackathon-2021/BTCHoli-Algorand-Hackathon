@@ -46,6 +46,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function NestedGrid() {
+  console.log('chutioya')
   const classes = useStyles();
   const [modalStyle] = React.useState(getModalStyle);
   const [open, setOpen] = useState(false);
@@ -54,6 +55,7 @@ export default function NestedGrid() {
   const [multibonds, setMultiBonds] = useState([]);
   const [normalbonds, setNormalBonds] = useState([]);
   const [bondData, setBondData] = useState({});
+  const [tId, setTId] = useState('');
 
   useEffect(() => {
     async function fetchData() {
@@ -93,7 +95,7 @@ export default function NestedGrid() {
   return (
     <div className={classes.root}>
       <Grid container spacing={1}>
-        <Grid container xs={6} spacing={3} >
+        <Grid xs={6} spacing={3} >
           <FormRow heading={"Individual Tokens"} openModal={openModal} openModal2={openModal2} setBondData={setBondData} bonds={normalbonds}/>
         </Grid>
         <Grid xs={6} spacing={6}>
@@ -109,14 +111,35 @@ export default function NestedGrid() {
         aria-describedby="simple-modal-description"
       >
         <div style={modalStyle} className={classes.paperTwo}>
-          <h1>Name of Bond:  {bondData.bond_name}</h1>
-          <TextField id="outlined-basic" label="USD to Invest: " variant="outlined" value={amount} onChange={(e) => setAmount(e.target.value)}/>
-          <h1>Enter Credit Card Details for payment through Stripe:</h1>
-          <CC />
-          <Button variant="contained" color="primary">
-            Buy
-          </Button>
-          </div>
+          {tId === '' && <div>
+            <h1>Name of Bond:  {bondData.bond_name}</h1>
+            <TextField id="outlined-basic" label="USD to Invest: " variant="outlined" value={amount} onChange={(e) => setAmount(e.target.value)}/>
+            <h1>Enter Credit Card Details for payment through Stripe:</h1>
+            <CC />
+            <Button variant="contained" color="primary" onClick={async () => {
+              const url2 = 'http://127.0.0.1:5000/stripe';
+              const response = await axios.post(url2, {
+                amount,
+                assetId: bondData.asset_id,
+                userId: localStorage.getItem('mnemonic')
+              })
+              console.log(response)
+              if(response.data.message === 'done') {
+                setTId(response.data.transaction_id)
+                setTimeout(() => {
+                  setOpen(false);
+                  setTId('')
+                }, 5000)
+              }
+            }}>
+              Buy
+            </Button>
+          </div>}
+          {tId && <div>
+            <h1>Transaction ID: {tId}</h1>
+          </div>}
+        </div>
+       
       </Modal>
       <Modal
         open={open2}
