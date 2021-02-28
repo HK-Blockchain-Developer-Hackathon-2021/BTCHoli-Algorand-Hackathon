@@ -8,6 +8,16 @@ import { Button, TextField } from '@material-ui/core';
 import { CC } from '../cc/cc';
 import axios from 'axios';
 import building from '../images/building.jpg'
+import download_1 from '../images/download_1.jpeg'
+import download_2 from '../images/download_2.jpeg'
+import download_3 from '../images/download_3.jpeg'
+import download_4 from '../images/download_4.jpeg'
+import download_5 from '../images/download_5.jpeg'
+import download_6 from '../images/download_6.jpeg'
+import download_7 from '../images/download_7.jpeg'
+import download_8 from '../images/download_8.jpeg'
+import download_9 from '../images/download_9.jpeg'
+import download_10 from '../images/download_10.jpeg'
 
 const url = 'http://127.0.0.1:5000/getForm';
 
@@ -55,6 +65,15 @@ export default function NestedGrid() {
   const [normalbonds, setNormalBonds] = useState([]);
   const [bondData, setBondData] = useState({});
   const [tId, setTId] = useState('');
+  const [index, setIndex] = useState(0);
+
+  function RandImg (renewable) {
+    const images = [download_1, download_2, download_3, download_4, download_5, download_6, download_7, download_8, download_9, download_10]
+    if (renewable) {
+      return images[9 - (index%10)]
+    }
+    return images[index%10]
+  }
 
   useEffect(() => {
     async function fetchData() {
@@ -81,10 +100,10 @@ export default function NestedGrid() {
     return (
       <React.Fragment >
         <h1>{props.heading}</h1>
-        {props.bonds.map((bond) => {
+        {props.bonds.map((bond, index) => {
           return (
             <Grid item xs={12}>
-              <ComplexGrid openModal={props.openModal} openModal2={props.openModal2} bond={bond} setBondData={props.setBondData}/>
+              <ComplexGrid openModal={props.openModal} openModal2={props.openModal2} bond={bond} setBondData={props.setBondData} ind={index} setIndex={props.setIndex} isRenewable={props.isRenewable}/>
             </Grid>)
         })}
       </React.Fragment>
@@ -95,10 +114,10 @@ export default function NestedGrid() {
     <div className={classes.root}>
       <Grid container spacing={1}>
         <Grid xs={6} spacing={3} >
-          <FormRow heading={"Individual Tokens"} openModal={openModal} openModal2={openModal2} setBondData={setBondData} bonds={normalbonds}/>
+          <FormRow heading={"Individual Tokens"} openModal={openModal} openModal2={openModal2} setBondData={setBondData} bonds={normalbonds} setIndex={setIndex}/>
         </Grid>
         <Grid xs={6} spacing={6}>
-          <FormRow heading={"Fund Tokens"} openModal={openModal} openModal2={openModal2} bonds={multibonds} setBondData={setBondData}/>
+          <FormRow heading={"Fund Tokens"} openModal={openModal} openModal2={openModal2} bonds={multibonds} setBondData={setBondData} isRenewable={true} setIndex={setIndex}/>
         </Grid>
       </Grid>
       <Modal
@@ -148,17 +167,18 @@ export default function NestedGrid() {
         aria-labelledby="simple-modal-title"
         aria-describedby="simple-modal-description"
       >
-      <div style={{ ...modalStyle, display: 'flex', flexDirection: 'column'}} className={classes.paperTwo}>
+      <div style={{ ...modalStyle, display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }} className={classes.paperTwo}>
           <div>
             {bondData.asset_id && <h4>Asset ID: {bondData.asset_id}</h4>}
             <h4>Bond Name: {bondData.bond_name}</h4>
+            {bondData.bond_name==='HKIA Runway' && <h4>Description: For the financing of the new runway at the Hong Kong International Airport. For more details <a href="https://www.icicibank.com/managed-assets/docs/personal/investments/Floating-Rate-Savings-Bonds.pdf">click here</a></h4>}
             <h4>Coupon Rate: {bondData.coupon_rate}</h4>
             <h4>Dividend Payment Time: {bondData.unit} {bondData.frequency}</h4>
             <h4>Issue Size: {bondData.issue_size}</h4>
             <h4>Issuer Name: {bondData.issuer_name}</h4>
           </div>
-          <div>
-            <img src={building} style={{ height: '200px', width: '200px' }}/>
+          <div style={{ margin: 'auto 0' }}>
+            <img src={RandImg()} style={{ height: '50vh', width: '50vh' }}/>
           </div>
       </div>
       </Modal>

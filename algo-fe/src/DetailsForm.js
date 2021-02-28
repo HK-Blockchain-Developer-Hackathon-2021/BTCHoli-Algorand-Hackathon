@@ -89,7 +89,7 @@ export default function DetailsForm(props) {
       <main className={classes.layout}>
         <Paper className={classes.paper}>
           {!isResponse && <Typography component="h1" variant="h4" align="center">
-            Checkout
+            Bond Details
           </Typography>}
           {!isResponse && <React.Fragment>
             <React.Fragment>
