@@ -8,7 +8,16 @@ import Grid from '@material-ui/core/Grid';
 import TextField from '@material-ui/core/TextField';
 import axios from 'axios';
 import {InputLabel, FormControl, MenuItem, Select} from '@material-ui/core'
+import BeatLoader from "react-spinners/BeatLoader";
+import Alert from '@material-ui/lab/Alert';
 
+const Actions = {
+    NOACTION: 0,
+    REQUESTED: 1,
+    SUCCESS: 2
+}
+
+let countId = 0;
 
 const useStyles = makeStyles((theme) => ({
     appBar: {
@@ -19,7 +28,7 @@ const useStyles = makeStyles((theme) => ({
         marginLeft: theme.spacing(2),
         marginRight: theme.spacing(2),
         [theme.breakpoints.up(600 + theme.spacing(2) * 2)]: {
-            width: 600,
+            width: "70vw",
             marginLeft: 'auto',
             marginRight: 'auto',
         },
@@ -78,8 +87,10 @@ const Card = (props) => {
                                 <Grid item>
                                     {props.type === "my" ? <Button color="primary" variant="contained" onClick={() => {
                                             props.onRemove(data._id);
+                                            props.onAction(Actions.SUCCESS);
                                         }}>Delete</Button> :
                                         <Button color="primary" variant="contained" onClick={async () => {
+                                            props.onAction(Actions.REQUESTED)
                                             const response = await axios.get("http://127.0.0.1:5000/orders/fill",
                                                 {
                                                     params: {
@@ -88,10 +99,9 @@ const Card = (props) => {
                                                     }
                                                 }
                                             );
-
                                             if (response.status === 200) {
-                                                alert("Executed");
                                                 props.onRemove(data._id);
+                                                props.onAction(Actions.SUCCESS);
                                             }
 
                                         }}>Execute</Button>
@@ -118,6 +128,11 @@ export default function P2P(props) {
     const [type, setType] = React.useState(null);
     const [myOrders, setMyOrders] = React.useState([]);
     const [otherOrders, setOtherOrders] = React.useState([]);
+    const [isLoading, setIsLoading] = React.useState(true);
+
+    const [makeOrderAction, setMakeOrderAction] = React.useState(Actions.NOACTION);
+    const [myOrderAction, setMyOrderAction] = React.useState(Actions.NOACTION);
+    const [otherOrderAction, setOtherOrderAction] = React.useState(Actions.NOACTION);
 
 
     const handleMyOrderRemove = (id) => {
@@ -143,14 +158,58 @@ export default function P2P(props) {
             );
             const my_orders = response.data.my_orders;
             const other_orders = response.data.market_orders;
+
+
             setMyOrders(my_orders);
             setOtherOrders(other_orders);
-            console.log(response.data);
+            setIsLoading(false);
         }
 
         fetchData();
         fetchOrderData();
     }, []);
+
+    const addToMyOrders = (order) => {
+        let mo = myOrders;
+        mo.push(order);
+        setMyOrders(mo);
+    }
+
+    let makeOrderMessage = <></>
+    if (makeOrderAction === Actions.REQUESTED) {
+        makeOrderMessage = <Alert severity="info" style={{margin: "0.5vh"}} onClose={() => {
+            setMakeOrderAction(Actions.NOACTION)
+        }}>Order Requested</Alert>
+    } else if (makeOrderAction === Actions.SUCCESS) {
+        makeOrderMessage = <Alert severity="success" style={{margin: "0.5vh"}} onClose={() => {
+            setMakeOrderAction(Actions.NOACTION)
+        }}>Order Successful</Alert>
+    }
+
+
+    let myOrderMessage = <></>
+    if (myOrderAction === Actions.REQUESTED) {
+        myOrderMessage = <Alert severity="info" style={{margin: "0.5vh"}} onClose={() => {
+            setMyOrderAction(Actions.NOACTION)
+        }}>Order Requested</Alert>
+    } else if (myOrderAction === Actions.SUCCESS) {
+        myOrderMessage = <Alert severity="success" style={{margin: "0.5vh"}} onClose={() => {
+            setMyOrderAction(Actions.NOACTION)
+        }}>Order Successful</Alert>
+    }
+
+
+    let otherOrderMessage = <></>
+    if (otherOrderAction === Actions.REQUESTED) {
+        otherOrderMessage = <Alert severity="info" style={{margin: "0.5vh"}} onClose={() => {
+            setOtherOrderAction(Actions.NOACTION)
+        }}>Order Requested</Alert>
+    } else if (otherOrderAction === Actions.SUCCESS) {
+        otherOrderMessage = <Alert severity="success" style={{margin: "0.5vh"}} onClose={() => {
+            setOtherOrderAction(Actions.NOACTION)
+        }}>Order Successful</Alert>
+    }
+
 
     return (
         <React.Fragment>
@@ -160,6 +219,7 @@ export default function P2P(props) {
                     <Typography component="h1" variant="h4" align="center">
                         P2P Marketplace
                     </Typography>
+                    {makeOrderMessage}
                     <Grid container spacing={3}>
                         <Grid item xs={12} sm={6}>
                             <FormControl variant="outlined" className={classes.formControl}>
@@ -176,7 +236,8 @@ export default function P2P(props) {
                                 >
                                     {bonds.map((bond) => {
                                         return (
-                                            <MenuItem key={bond._id} value={bond._id}>{bond.bond_name}</MenuItem>
+                                            <MenuItem key={bond._id}
+                                                      value={bond._id}>{bond.bond_name}</MenuItem>
                                         )
                                     })}
                                 </Select>
@@ -234,16 +295,29 @@ export default function P2P(props) {
                             color="primary"
                             className={classes.button}
                             onClick={async () => {
+                                setMakeOrderAction(Actions.REQUESTED)
                                 const url2 = 'http://localhost:5000/createOrder'
-                                const response = await axios.post(url2, {
+
+                                const order = {
                                     userId: localStorage.getItem('mnemonic'),
                                     assetId: bonds.find((bond) => bond._id === bondSelected).asset_id,
                                     tokenAmount: tokens,
                                     usdtAmount: usdt,
                                     type: type
-                                })
+                                }
+
+                                const response = await axios.post(url2, order);
+
                                 if (response.data.message === 'done') {
-                                    alert('submitted order')
+                                    setMakeOrderAction(Actions.SUCCESS)
+                                    addToMyOrders({
+                                        _id: countId++,
+                                        user_id: order.userId,
+                                        asset_id: bonds.find((bond) => bond._id === bondSelected).bond_name,
+                                        token_amount: order.tokenAmount,
+                                        usdt_amount: order.usdtAmount,
+                                        type: order.type
+                                    })
                                     setBond()
                                     setUsdt(0)
                                     setTokens(0)
@@ -256,23 +330,34 @@ export default function P2P(props) {
                     </div>
 
                 </Paper>
+
+                <Typography component="h1" variant="h4" align="center">
+                    <BeatLoader margin={"auto"} type="ThreeDots" height={80} width={80} color={'#123abc'}
+                                loading={isLoading}/>
+                </Typography>
+
                 <Paper className={classes.paper}>
                     <Typography component="h1" variant="h4" align="center">
                         My Orders
                     </Typography>
+                    {myOrderMessage}
                     {myOrders && myOrders.map((order) => {
                         return (
-                            <Card type="my" data={order} key={order._id} onRemove={handleMyOrderRemove}/>
+                            <Card type="my" data={order} key={order._id} onRemove={handleMyOrderRemove}
+                                  onAction={setMyOrderAction}/>
                         )
                     })}
                 </Paper>
                 <Paper className={classes.paper}>
+
                     <Typography component="h1" variant="h4" align="center">
-                        Others Orders
+                        Market
                     </Typography>
+                    {otherOrderMessage}
                     {otherOrders && otherOrders.map((order) => {
                         return (
-                            <Card type="other" data={order} key={order._id} onRemove={handleOtherOrderRemove}/>
+                            <Card type="other" data={order} key={order._id}
+                                  onRemove={handleOtherOrderRemove} onAction={setOtherOrderAction}/>
                         )
                     })}
                 </Paper>
