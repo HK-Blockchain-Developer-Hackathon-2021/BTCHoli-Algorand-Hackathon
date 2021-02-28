@@ -54,6 +54,12 @@ const useStyles = makeStyles((theme) => ({
         marginTop: theme.spacing(3),
         marginLeft: theme.spacing(1),
     },
+    green: {
+        color: "green"
+    },
+    red: {
+        color: "red"
+    }
 }));
 
 const Card = (props) => {
@@ -82,6 +88,10 @@ const Card = (props) => {
                                     </Typography>
                                     <Typography variant="body2">
                                         <b>USDT Amount: {data.usdt_amount} </b>
+                                    </Typography>
+                                    <Typography variant="body2">
+                                        <b>Type: <span
+                                            className={data.type.startsWith("B") ? classes.green : classes.red}>{data.type}</span></b>
                                     </Typography>
                                 </Grid>
                                 <Grid item>
