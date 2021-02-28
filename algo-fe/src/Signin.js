@@ -107,7 +107,7 @@ export default function SignIn(props) {
               onChange={handleChange}
               label="User Type"
             >
-              <MenuItem value={"Realtor"}>Realtor</MenuItem>
+              <MenuItem value={"Lead"}>Lead Arranger</MenuItem>
               <MenuItem value={"Government"}>Government</MenuItem>
               <MenuItem value={"Investor"}>Investor</MenuItem>
             </Select>
@@ -119,7 +119,11 @@ export default function SignIn(props) {
             className={classes.submit}
             onClick={(e) => {
               e.preventDefault();
-              nextPath();
+              if(userType === 'Investor') {
+                  window.location.replace('http://localhost:3000/profile/'+localStorage.getItem("mnenomic"));
+              } else {
+                nextPath();
+              }  
             }}
           >
             Sign In
