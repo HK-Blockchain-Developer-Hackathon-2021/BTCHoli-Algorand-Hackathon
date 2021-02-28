@@ -191,8 +191,8 @@ class complete_order(Resource):
             seller = order['user_id']
             p2p_order(buyer, seller, dict_r)
 
-            tx_buy = {'user_id': data_user, 'asset_id': int(order['asset_id']), 'amount': int(order['usdt_amount']), 'tokens': order['token_amount'], 'action': "BUY", 'created_at': datetime.now()}
-            tx_sell = {'user_id': order_user, 'asset_id': int(order['asset_id']), 'amount': int(order['usdt_amount']), 'tokens': order['token_amount'], 'action': "SELL", 'created_at': datetime.now()}
+            tx_buy = {'user_id': data_user['_id'], 'asset_id': int(order['asset_id']), 'amount': int(order['usdt_amount']), 'tokens': order['token_amount'], 'action': "BUY", 'created_at': datetime.now()}
+            tx_sell = {'user_id': order_user['_id'], 'asset_id': int(order['asset_id']), 'amount': int(order['usdt_amount']), 'tokens': order['token_amount'], 'action': "SELL", 'created_at': datetime.now()}
             db.transaction.insert(tx_buy)
             db.transaction.insert(tx_sell)
         else:
@@ -200,8 +200,8 @@ class complete_order(Resource):
             seller = data['userId']
             p2p_order(buyer, seller, dict_r)
 
-            tx_buy = {'user_id': order_user, 'asset_id': int(order['asset_id']), 'amount': int(order['usdt_amount']), 'tokens': order['token_amount'], 'action': "BUY", 'created_at': datetime.now()}
-            tx_sell = {'user_id': data_user, 'asset_id': int(order['asset_id']), 'amount': int(order['usdt_amount']), 'tokens': order['token_amount'], 'action': "SELL", 'created_at': datetime.now()}
+            tx_buy = {'user_id': order_user['_id'], 'asset_id': int(order['asset_id']), 'amount': int(order['usdt_amount']), 'tokens': order['token_amount'], 'action': "BUY", 'created_at': datetime.now()}
+            tx_sell = {'user_id': data_user['_id'], 'asset_id': int(order['asset_id']), 'amount': int(order['usdt_amount']), 'tokens': order['token_amount'], 'action': "SELL", 'created_at': datetime.now()}
             db.transaction.insert(tx_buy)
             db.transaction.insert(tx_sell)
 
