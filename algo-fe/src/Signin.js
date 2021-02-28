@@ -120,8 +120,8 @@ export default function SignIn(props) {
             onClick={(e) => {
               e.preventDefault();
               if(userType === 'Investor') {
-                  console.log('chutiyas')
-                  window.location.replace('http://localhost:3000/profile/'+localStorage.getItem("mnenomic"));
+                  // localStorage.setItem('mnemonic')
+                  window.location.replace('http://localhost:3000/profile/'+mnemonic);
               } else {
                 nextPath();
               }  
