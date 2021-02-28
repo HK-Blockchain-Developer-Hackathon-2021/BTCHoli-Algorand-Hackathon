@@ -183,15 +183,27 @@ class complete_order(Resource):
         order = dict(db.orders.find_one({'_id':order_id}))
 
         dict_r = {'usdt_amount': order['usdt_amount'], 'token_amount': int(order['token_amount']), 'asset_id': int(order['asset_id'])}
+        data_user = db.user.find_one({'mnemonic':data['userId']})
+        order_user = db.user.find_one({'mnemonic':order['user_id']})
 
         if order['type'] == "SELL":
             buyer = data['userId']
             seller = order['user_id']
             p2p_order(buyer, seller, dict_r)
+
+            tx_buy = {'user_id': data_user, 'asset_id': int(order['asset_id']), 'amount': int(order['usdt_amount']), 'tokens': order['token_amount'], 'action': "BUY", 'created_at': datetime.now()}
+            tx_sell = {'user_id': order_user, 'asset_id': int(order['asset_id']), 'amount': int(order['usdt_amount']), 'tokens': order['token_amount'], 'action': "SELL", 'created_at': datetime.now()}
+            db.transaction.insert(tx_buy)
+            db.transaction.insert(tx_sell)
         else:
             buyer = order['user_id']
             seller = data['userId']
             p2p_order(buyer, seller, dict_r)
+
+            tx_buy = {'user_id': order_user, 'asset_id': int(order['asset_id']), 'amount': int(order['usdt_amount']), 'tokens': order['token_amount'], 'action': "BUY", 'created_at': datetime.now()}
+            tx_sell = {'user_id': data_user, 'asset_id': int(order['asset_id']), 'amount': int(order['usdt_amount']), 'tokens': order['token_amount'], 'action': "SELL", 'created_at': datetime.now()}
+            db.transaction.insert(tx_buy)
+            db.transaction.insert(tx_sell)
 
         db.orders.delete_one({'_id': order_id})
 
